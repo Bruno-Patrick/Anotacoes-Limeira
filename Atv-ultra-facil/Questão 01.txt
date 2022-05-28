@@ -1,0 +1,10 @@
+minha_conta = Conta('1234', 'Bruno', '200', '300')
+
+O Atributo saldo, por exemplo, 
+está encapsulado através de __, você em tese não deveria poder alterar diretamente
+porém utilzando "minha_conta.saldo = VALOR_DESEJADO" você consegue alterar o valor diretamente
+Isso não é uma boa prática, aliás se o objeto está marcado com __ ou _
+é porque o programador quer sinalizar que aquele objeto deve ser interpretado 
+como privado.
+
+Um objeto taxado com __ deverá ser manipulado através de getters e setters.

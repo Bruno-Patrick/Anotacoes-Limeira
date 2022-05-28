@@ -1,0 +1,6 @@
+Até conseguimos usar a função na classe não-filha de conta, porém teríamos
+que passar uma referência para a conta para essa classe não-filha.
+Dessa forma, a classe não-filha consegue acessar o método dentro do objeto da classe conta.
+Caso contrário, sem usar a henraça e, explícitamente definirmos a classe "não-filha" como uma filha
+não é possível, pois uma classe não pode acessar um método de outra classe sem possuir alguma referência
+para essa classe.
