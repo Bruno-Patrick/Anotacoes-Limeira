@@ -6,4 +6,4 @@ class ManipuladorDeTributaveis:
         for tr in lista_tributaveis:
             if isinstance(tr, TributavelMixIn):
                 total += tr.valor_imposto(tr._taxa)
-        return print(f"Impostos coletados: R${total}")
+        return print(f"Impostos coletados: R${total:,.2f}")

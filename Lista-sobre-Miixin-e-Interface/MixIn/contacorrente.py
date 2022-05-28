@@ -1,8 +1,9 @@
 from conta import Conta
 from tributavelMixIn import TributavelMixIn
+from taxaMixIn import taxaMixIn
 
 
-class ContaCorrente(Conta, TributavelMixIn):
+class ContaCorrente(Conta, TributavelMixIn, taxaMixIn):
 
     def __init__(self, n, cli, sal):
         super().__init__(n, cli, sal)
@@ -19,7 +20,7 @@ class ContaCorrente(Conta, TributavelMixIn):
         self._taxa = valor
 
     def atualiza(self, taxa):
-        valor = super().valor_imposto(taxa*self._taxa)
+        valor = super().valor_imposto(super().taxa_decimal(taxa)*self._taxa)
         self._extrato._transacoes.append(f"\nAtualização_na_Conta() =>")
         self.depositar(valor)
         self.sacar(0.1)

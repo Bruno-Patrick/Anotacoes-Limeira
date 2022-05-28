@@ -10,7 +10,7 @@ class Banco:
         self._caixa_geral = 0
         for tr in self._contas:
             self._caixa_geral += tr._saldo
-        return print(f"Caixa geral do {self._nome} R${self._caixa_geral}")
+        return print(f"Caixa geral do {self._nome} R${self._caixa_geral:,.2f}")
 
     def vincular_conta(self, conta):
         self._contas.append(conta)
