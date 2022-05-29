@@ -1,16 +1,13 @@
 from conta import Conta
-from tributavelMixIn import TributavelMixIn
+from historico import Historico
 from taxaMixIn import taxaMixIn
 
-
-class ContaCorrente(Conta, TributavelMixIn, taxaMixIn):
+class Investimento(Conta, taxaMixIn):
 
     def __init__(self, n, cli, sal):
         super().__init__(n, cli, sal)
-        self._taxa = 2
-
-    def __str__(self):
-        super().__str__
+        self._extrato = Historico()
+        self._taxa = 3
 
     @property
     def taxa(self):
@@ -23,13 +20,13 @@ class ContaCorrente(Conta, TributavelMixIn, taxaMixIn):
         taxa = taxa/100
         valor = self._saldo*taxa
         return valor
-    
+
     def taxa_decimal(self, taxa):
         taxa = taxa/100
         return taxa
 
     def atualiza(self, taxa):
-        valor = self.valor_imposto(self.taxa_decimal(taxa)*self._taxa)
+        valor = self.valor_imposto(self.taxa_decimal(taxa)*self.taxa_decimal(self.taxa))
         self._extrato._transacoes.append(f"\nAtualização_na_Conta() =>")
         self.depositar(valor)
         self.sacar(0.1)
