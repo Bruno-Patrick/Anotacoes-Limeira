@@ -17,6 +17,7 @@ seguro = SeguroDeVida(3, 500, corrente)
 # Fim da declaração dos objetos de classe
 
 # Main(){
+help(TributavelInterface)
 
 TributavelInterface.register(ContaCorrente)
 TributavelInterface.register(SeguroDeVida)
@@ -43,4 +44,5 @@ investimentos.extrato
 
 bank.impostos
 bank.caixa_geral
+
 # }
