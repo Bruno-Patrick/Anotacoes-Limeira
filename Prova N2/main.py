@@ -24,3 +24,5 @@ Sabonete.comprar(10)
 Sabonete.comprar(4.25)
 RecolFarma.imprimir()
 RecolFarma.situacao_monetaria()
+
+print(Sabonete.farmacia.produtos_vendidos)

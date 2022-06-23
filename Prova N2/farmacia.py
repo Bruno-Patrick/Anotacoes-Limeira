@@ -44,10 +44,10 @@ class Farmacia:
         self.lucro_total = 0
         self.desconto_total = 0
         self.produtos_vendidos = 0
-        for dados in self.produtos:
-            self.lucro_total += dados.farmacia.lucro_total
-            self.desconto_total += dados.farmacia.desconto_total
-            self.produtos_vendidos += dados.farmacia.produtos_vendidos
+        for produtos in self.produtos:
+            self.lucro_total += produtos.farmacia.lucro_total
+            self.desconto_total += produtos.farmacia.desconto_total
+            self.produtos_vendidos += produtos.farmacia.produtos_vendidos
         print(f"\n||———————————————————————————————————————————————————||")
         print(f"||Total de Produtos Vendidos || {self.produtos_vendidos:,.0f}                    ||")   
         print(f"||Lucro total da Farmácia    || {self.lucro_total:,.2f}                ||")   
