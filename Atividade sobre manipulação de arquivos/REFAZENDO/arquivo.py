@@ -29,11 +29,13 @@ class Arquivo:
                            charactersCount += len(characterslist)
                            consoantesCount += self.consoantes(characterslist)
                            vogaisCount += self.vogais(characterslist)
-            print(f"\nTOTAL DE LINHAS: {len(readlines)}")
-            print(f"\nTOTAL DE CARACTERES: {charactersCount}")
-            print(f"\nTOTAL DE VOGAIS: {vogaisCount}")
-            print(f"\nTOTAL DE CONSOANTES: {consoantesCount}")
-            print(f"\nTOTAL DE CARACTERES ESPECIAIS: {charactersCount - consoantesCount - vogaisCount}")
+            print("--------------------------------------------------------")
+            print(f"|TOTAL DE LINHAS: {len(readlines)}\n|")
+            print(f"|TOTAL DE CARACTERES: {charactersCount}\n|")
+            print(f"|TOTAL DE VOGAIS: {vogaisCount}\n|")
+            print(f"|TOTAL DE CONSOANTES: {consoantesCount}\n|")
+            print(f"|TOTAL DE CARACTERES ESPECIAIS: {charactersCount - consoantesCount - vogaisCount}")
+            print("--------------------------------------------------------")
                            
         except FileNotFoundError:
             print(bcolors.FAIL + f'Arquivo não existe! Crie-o primeiro' + bcolors.RESET)
@@ -59,5 +61,19 @@ class Arquivo:
                     count += 1
         return count
 
+
+    def equalarchive(self):
+        print(bcolors.WARNING + '\n não é necessário informar a extesão do arquivo (.txt)\n' + bcolors.RESET)
+        A1 = str(input("Qual nome do primeiro arquivo que desejas comparar?\nNome do arquivo: "))
+        A2 = str(input("Qual nome do segundo arquivo que desejas comparar?\nNome do arquivo: "))
+        with open(f'Atividade sobre manipulação de arquivos/REFAZENDO/txt/{A1}.txt') as A1:
+            A1reader = A1.read()
+            with open(f'Atividade sobre manipulação de arquivos/REFAZENDO/txt/{A2}.txt') as A2:
+                A2reader = A2.read()
+                if (A1reader == A2reader):
+                    return print("Arquivos indênticos")
+                return print("Arquivos diferentes")
+
+
 ar = Arquivo()
-ar.charactersDescribe()
+ar.equalarchive()
