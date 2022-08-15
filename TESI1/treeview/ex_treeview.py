@@ -10,7 +10,12 @@ class Display:
         self.display.minsize(300,300)
  
         def deletar():
-            tvw.delete(tvw.selection())
+            selecao = tvw.selection()
+            try:
+                tvw.delete(selecao)
+            except:
+                for i in range(0, len(selecao)):
+                    tvw.delete(selecao[i])
 
         def cadastrar():
             topl = tk.Toplevel(self.display)
@@ -37,9 +42,10 @@ class Display:
                 if nome_entry.get() == '' or email_entry.get() == '' or telefone_entry.get() == '':
                     messagebox.showwarning("Preencha os campos!", "Todos os campos devem estar preenchidos!")
                 else:
-                    tvw.insert('', tk.END, values=(
-                        nome_entry.get(), email_entry.get(), telefone_entry.get()
-                        ))
+                    for i in range(15):
+                        tvw.insert('', tk.END, values=(
+                            nome_entry.get(), email_entry.get(), telefone_entry.get()
+                            ))
                     topl.destroy()
 
             btn_confirmar = tk.Button(topl, text='Confirmar cadastro',
