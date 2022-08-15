@@ -42,10 +42,9 @@ class Display:
                 if nome_entry.get() == '' or email_entry.get() == '' or telefone_entry.get() == '':
                     messagebox.showwarning("Preencha os campos!", "Todos os campos devem estar preenchidos!")
                 else:
-                    for i in range(15):
-                        tvw.insert('', tk.END, values=(
-                            nome_entry.get(), email_entry.get(), telefone_entry.get()
-                            ))
+                    tvw.insert('', tk.END, values=(
+                        nome_entry.get(), email_entry.get(), telefone_entry.get()
+                        ))
                     topl.destroy()
 
             btn_confirmar = tk.Button(topl, text='Confirmar cadastro',
