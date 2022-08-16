@@ -136,7 +136,18 @@ class Display:
                 frm_btns_atualizar.grid(row=3,column=0)
 
                 def confirmar():
-                    
+                    nome = self.nome_entry_atualizar.get()
+                    cpf = self.CPF_entry_atualizar.get()              
+                    telefone = self.telefone_entry_atualizar.get()
+
+                    if item[0] == nome and item[1] == cpf and item[2] == telefone:
+                        messagebox.showwarning('Aviso!',
+                        'Você deve alterar alguma coisa!', parent=topl_atualizar)
+                    else:
+                        confirmacao = messagebox.askyesno("Alterações feitas!",
+                         "Deseja confirmar?", parent = topl_atualizar )
+                        if confirmacao:
+                            self.tvw.item(selecao, values=(nome, cpf, telefone))
 
                 btn_confirmar = tk.Button(frm_btns_atualizar, text='Confirmar atualização',              
                 bg='grey', command=confirmar)
@@ -152,7 +163,6 @@ class Display:
                 self.nome_entry_atualizar.insert(0, item[0])
                 self.CPF_entry_atualizar.insert(0, item[1])
                 self.telefone_entry_atualizar.insert(0, item[2])
-
             else:
                 messagebox.showwarning("Alerta!", "Selecione somente 1 campo", parent=self.display)
 
