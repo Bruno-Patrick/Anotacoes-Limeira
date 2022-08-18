@@ -1,4 +1,5 @@
 from datetime import date
+import os, io
 class Extrato:
     __slots__ = ["__extrato"]
     def __init__(self):
@@ -8,10 +9,10 @@ class Extrato:
     def extrato(self):
         return self.__extrato
 
-    def imprimir(self, numero, cliente):
+    def imprimir(self, numero):
         today = date.today()
-        day = today.strftime("%d/%m/%Y")
-
-        with open(f'trabalho1/extratos/{cliente}/{numero}_+{day}','a') as logger:
+        day = today.strftime("%d_%m_%Y")
+        diretorio = os.path.dirname(__file__)
+        with io.open(f'{diretorio}\extratos\Conta_{numero}_{day}.txt','w', encoding="utf-8") as logger:
             for movimentacoes in self.extrato:
                 logger.write(f"{movimentacoes}\n")

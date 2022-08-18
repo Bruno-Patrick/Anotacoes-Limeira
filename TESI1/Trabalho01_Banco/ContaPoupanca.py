@@ -1,19 +1,21 @@
+from datetime import datetime
 from Conta import Conta
 
 class ContaPoupaca(Conta):
 
     def add_mov(self, operacao, valor):
+        today = datetime.now()
+        day = today.strftime("%d/%m/%Y às %H:%M")
         self.extrato.append(
-            f"|{operacao}| no valor de R${valor:.2f}|"
+            f"|{operacao}| no valor de R${valor:.2f}| {day}"
         )
 
     def sacar(self, value):
-        if self.__active == True:
-            if self.__saldo < value:
+        if self.active == True:
+            if self.saldo < value:
                 return (print(f"Quantia inexistente"))
             else:
-                self.__saldo =- value
-
+                self.saldo = (self.saldo-value)
                 operacao = "Saque"
                 valor = value
                 self.add_mov(operacao, valor)
@@ -21,9 +23,8 @@ class ContaPoupaca(Conta):
             return (print(f"Esta conta foi encerrada!"))
 
     def depositar(self, value):
-        if self.__active == True:
-            self.__saldo += value
-
+        if self.active == True:
+            self.saldo = (self.saldo+value)
             operacao = "Depósito"
             valor = value
             self.add_mov(operacao, valor)
@@ -31,10 +32,10 @@ class ContaPoupaca(Conta):
             return(print(f"Esta conta foi encerrada!"))
 
     def atualiza(self):
-        juros = self.saldo*(self.__juros/100)
+        juros = self.saldo*(self.juros/100)
         operacao = "Atualização"
         valor = juros
         self.add_mov(operacao, valor)
-        depositar(juros)
+        self.depositar(juros)
 
         

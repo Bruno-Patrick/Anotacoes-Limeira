@@ -14,6 +14,12 @@ class Conta(abc.ABC):
         self.__juros = 1.5
         self.__desconto = 0.50
 
+    def __str__(self):
+        return (f"Conta {self.numero}, cliente {self.cliente.nome}")
+
+    def death(self):
+        del self
+
     @abc.abstractmethod
     def sacar(self, value):
         pass
@@ -48,8 +54,11 @@ class Conta(abc.ABC):
     @property
     def extrato(self):
         return self.__extrato.extrato
-    
 
+    def imprimir_extrato(self):
+        print("Extrato gerado!")
+        return self.__extrato.imprimir(self.numero)
+    
     @property
     def active(self):
         return self.__active
@@ -71,6 +80,3 @@ class Conta(abc.ABC):
     @property
     def desconto(self):
         return self.__desconto
-
-    def imprimir_extrato(self):
-        return self.__extrato.imprimir(self.numero, self.cliente)

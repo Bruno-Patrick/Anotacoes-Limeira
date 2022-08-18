@@ -4,7 +4,9 @@ class Cliente:
         self.__nome = nome
         self.__endereco = endereco
         self.__cpf = cpf
-        
+
+    def death(self):
+        del self 
 
     @property
     def nome(self):

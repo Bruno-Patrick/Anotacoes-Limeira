@@ -1,5 +1,3 @@
-from Cliente import Cliente
-
 class Banco:
     __slots__ = ["__nome", "__numero", "__contas",
      "__juros", "__desconto"]
@@ -63,12 +61,9 @@ class Banco:
         for conta in self.contas:
             conta.__desconto = value
 
-    def __del__(self):
-        print("**\n** Objeto removido! **\n**")
-
     def remover(self, cliente):
         for conta in self.contas:
-            if cliente == conta.cliente:
+            if cliente.cpf == conta.cliente.cpf:
                 return print(f"Cliente vinculado à uma conta. Impossível removê-lo!")
             else:
-                self.__del__(cliente)
+                cliente.death()

@@ -1,0 +1,10 @@
+|Saque| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Saque| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Depósito| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Depósito| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Depósito| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Depósito| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Saque| no valor de 100.00, com desconto de 0.50| 18/08/2022 às 18:36|
+|Saque| no valor de 396.00, com desconto de 0.50| 18/08/2022 às 18:36|
+Conta 1 foi encerrada
+Conta 1 foi reaberta
