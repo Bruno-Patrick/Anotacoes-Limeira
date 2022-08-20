@@ -17,9 +17,6 @@ class Conta(abc.ABC):
     def __str__(self):
         return (f"Conta {self.numero}, cliente {self.cliente.nome}")
 
-    def death(self):
-        del self
-
     @abc.abstractmethod
     def sacar(self, value):
         pass

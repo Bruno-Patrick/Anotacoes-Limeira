@@ -66,4 +66,4 @@ class Banco:
             if cliente.cpf == conta.cliente.cpf:
                 return print(f"Cliente vinculado à uma conta. Impossível removê-lo!")
             else:
-                cliente.death()
+                del cliente
