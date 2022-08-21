@@ -7,9 +7,9 @@ from ContaPoupanca import ContaPoupaca
 b1 = Banco(1, "Banco do Brasil")
 cliente = Cliente('Bruno Patriques', 'Sex GPS', '036319')
 cliente2 = Cliente('Bruno Patriques', 'Sex GPS', '03631932')
-c1 = ContaCorrente(1, cliente, 300)
-c2 = ContaPoupaca(2,cliente,300)
-c3 = ContaPoupaca(3, cliente, 12)
+c1 = ContaCorrente(cliente, 300)
+c2 = ContaPoupaca(cliente,300)
+c3 = ContaPoupaca( cliente, 12)
 
 c1.change_active()
 print(c1.active)

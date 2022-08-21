@@ -1,12 +1,16 @@
 import abc
-from Banco import Banco
+from datetime import datetime
 from Extrato import Extrato
 
 class Conta(abc.ABC):
+
+    numeroDaConta = 1
+
     __slots__ = ["__numero", "__cliente", "__saldo",
      "__active", "__extrato", "__juros","__desconto"]
-    def __init__(self, n, cli, sal):
-        self.__numero = n
+    def __init__(self, cli, sal):
+        self.__numero = Conta.numeroDaConta
+        Conta.numeroDaConta += 1
         self.__cliente = cli
         self.__saldo = sal
         self.__active = True
@@ -60,14 +64,16 @@ class Conta(abc.ABC):
     def active(self):
         return self.__active
     def change_active(self):
+        today = datetime.now()
+        day = today.strftime("%d/%m/%Y às %H:%M")
         if (self.__active):
             if self.__saldo == 0:
                 self.__active = False
-                self.extrato.append(f"Conta {self.__numero} foi encerrada")
+                self.extrato.append(f"|Encerramento| Conta {self.__numero} foi encerrada| {day}")
             else:
                 return (print(f"A conta não pode ter saldo positivo para encerrá-la"))
         else:
-            self.extrato.append(f"Conta {self.__numero} foi reaberta")
+            self.extrato.append(f"|Encerramento| Conta {self.__numero} foi reaberta| {day}")
             self.__active = True
 
     @property

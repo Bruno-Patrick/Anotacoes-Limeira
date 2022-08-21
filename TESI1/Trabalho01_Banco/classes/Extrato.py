@@ -13,6 +13,6 @@ class Extrato:
         today = date.today()
         day = today.strftime("%d_%m_%Y")
         diretorio = os.path.dirname(__file__)
-        with io.open(f'{diretorio}\extratos\Conta_{numero}_{day}.txt','w', encoding="utf-8") as logger:
+        with io.open(f'{diretorio}\extratos\Conta_{numero}_{day}.txt','a', encoding="utf-8") as logger:
             for movimentacoes in self.extrato:
                 logger.write(f"{movimentacoes}\n")

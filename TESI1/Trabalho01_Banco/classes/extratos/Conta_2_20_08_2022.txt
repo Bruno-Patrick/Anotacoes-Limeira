@@ -1,7 +1,7 @@
-|Saque| no valor de R$200.00| 20/08/2022 às 10:39
-|Depósito| no valor de R$100.00| 20/08/2022 às 10:39
-|Atualização| no valor de R$3.00| 20/08/2022 às 10:39
-|Depósito| no valor de R$3.00| 20/08/2022 às 10:39
-|Saque| no valor de R$203.00| 20/08/2022 às 10:39
-Conta 2 foi encerrada
-Conta 2 foi reaberta
+|Saque| no valor de R$200.00| 20/08/2022 às 20:33
+|Depósito| no valor de R$100.00| 20/08/2022 às 20:33
+|Atualização| no valor de R$3.00| 20/08/2022 às 20:33
+|Depósito| no valor de R$3.00| 20/08/2022 às 20:33
+|Saque| no valor de R$203.00| 20/08/2022 às 20:33
+|Encerramento| Conta 2 foi encerrada| 20/08/2022 às 20:33
+|Encerramento| Conta 2 foi reaberta| 20/08/2022 às 20:33
