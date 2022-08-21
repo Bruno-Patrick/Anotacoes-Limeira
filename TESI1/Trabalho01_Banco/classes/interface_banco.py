@@ -164,6 +164,7 @@ class Display:
                             ,f"Tem certeza que quer criar uma conta corrente para esse cliente?")
                             if(confirm):
                                 cc = ContaCorrente(selecao[0], 0)
+                                self.banco.contas.append(cc)
 
                 self.frmBtns = tk.Frame(toplevel)
                 self.frmBtns.pack(side=tk.LEFT, fill=tk.BOTH)
@@ -208,6 +209,7 @@ class Display:
                             ,f"Tem certeza que quer criar uma conta poupança para esse cliente?")
                             if(confirm):
                                 cc = ContaPoupaca(selecao[0], 0)
+                                self.banco.contas.append(cc)
 
                 self.frmBtns = tk.Frame(toplevel)
                 self.frmBtns.pack(side=tk.LEFT, fill=tk.BOTH)
@@ -234,9 +236,43 @@ class Display:
         self.menuBarra.add_cascade(label="Configurações", menu=self.menu_config)
         self.menu_config.add_command(label="Definir banco", command=definir_banco)
 
+        self.tvw_principal = ttk.Treeview(self.display)
+        colunas = ['Conta','Modalidade','Saldo', "Status"]
+        self.tvw_principal = ttk.Treeview(self.display, columns=colunas, show="headings")
+        self.tvw_principal.pack(side=tk.LEFT, fill=tk.BOTH)
+        self.tvw_principal.heading(colunas[0], text="Conta")
+        self.tvw_principal.heading(colunas[1], text="Modalidade")
+        self.tvw_principal.heading(colunas[2], text="Saldo")
+        self.tvw_principal.heading(colunas[3], text="Status")
+
+        scrollbar = tk.Scrollbar(self.display, command=self.tvw_principal.yview)
+        scrollbar.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
+        self.tvw_principal.configure(yscroll=scrollbar.set)
+
+        def atualizar_lista():
+            tudo = self.tvw_principal.get_children()
+            for i in tudo:
+                self.tvw_principal.delete(i)
+            for conta in self.banco.contas:
+                if (conta.active):
+                    status = "Conta Ativa"
+                else:
+                    status = "Conta Fechada"
+                if isinstance(conta, ContaCorrente):
+                    self.tvw_principal.insert('',tk.END,values=(
+                        conta.numero,"Conta Corrente",conta.saldo,status
+                    ))
+                if isinstance(conta, ContaPoupaca):
+                    self.tvw_principal.insert('',tk.END,values=(
+                        conta.numero,"Conta Poupança",conta.saldo,status
+                    ))
+
+        self.btn_atualizar = tk.Button(self.display, text="Atualizar lista!", command=atualizar_lista)
+        self.btn_atualizar.pack()
+
         # Este frame está empurrando tudo para o topo da página >>>>>>>>>>>>>>>>>>>
         self.frm_empurra_cima = tk.Frame(self.display, height=self.alturaTotal)
-        self.frm_empurra_cima.pack()
+        self.frm_empurra_cima.pack(side=tk.LEFT)
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

@@ -26,6 +26,7 @@ class Banco:
     @property
     def contas(self):
         return self.__contas
+        
     def add_conta(self, conta):
         conta.__juros = self.__juros
         conta.__desconto = self.__desconto
