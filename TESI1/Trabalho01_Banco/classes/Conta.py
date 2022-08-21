@@ -18,8 +18,8 @@ class Conta(abc.ABC):
         self.__juros = 1.5
         self.__desconto = 0.50
 
-    def __str__(self):
-        return (f"Conta {self.numero}, cliente {self.cliente.nome}")
+    # def __str__(self):
+    #     return (f"Conta {self.numero}, cliente {self.cliente.nome}")
 
     @abc.abstractmethod
     def sacar(self, value):
