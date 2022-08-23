@@ -13,14 +13,15 @@ class ContaPoupaca(Conta):
     def sacar(self, value):
         if self.active == True:
             if self.saldo < value:
-                return (print(f"Quantia inexistente"))
+                return "Quantia insuficiente"
             else:
                 self.saldo = (self.saldo-value)
                 operacao = "Saque"
                 valor = value
                 self.add_mov(operacao, valor)
+                return True
         else:
-            return (print(f"Esta conta foi encerrada!"))
+            return "Sua conta está encerrada"
 
     def depositar(self, value):
         if self.active == True:
@@ -28,8 +29,9 @@ class ContaPoupaca(Conta):
             operacao = "Depósito"
             valor = value
             self.add_mov(operacao, valor)
+            return True
         else:
-            return(print(f"Esta conta foi encerrada!"))
+            return "Sua conta está encerrada"
 
     def atualiza(self):
         juros = self.saldo*(self.juros/100)

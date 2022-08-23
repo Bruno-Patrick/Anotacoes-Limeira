@@ -13,16 +13,16 @@ class ContaCorrente(Conta):
     def sacar(self, value):
         if self.active == True:
             if self.saldo < value:
-                return (print(f"Quantia para saque inexistente"))
+                return "Quantia insuficiente"
             else:
                 self.saldo = (self.saldo-(value + self.desconto))
                 operacao = "Saque"
                 valor = value
                 desconto = self.desconto
                 self.add_mov(operacao, valor, desconto)
-                return print(f"Sucesso! Saque de {value}")
+                return True
         else:
-            return (print(f"Esta conta foi encerrada!"))
+            return "Sua conta está encerrada"
 
     def depositar(self, value):
         if self.active == True:
@@ -31,9 +31,9 @@ class ContaCorrente(Conta):
             valor = value
             desconto = self.desconto
             self.add_mov(operacao, valor, desconto)
-            return print(f"Sucesso! Depósito de {value}")
+            return True
         else:
-            return(print(f"Esta conta foi encerrada!"))
+            return "Sua conta está encerrada"
 
     def atualiza(self):
         pass
