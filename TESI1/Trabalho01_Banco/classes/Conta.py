@@ -70,11 +70,13 @@ class Conta(abc.ABC):
             if self.__saldo == 0:
                 self.__active = False
                 self.extrato.append(f"|Encerramento| Conta {self.__numero} foi encerrada| {day}")
+                return "Conta encerrada!"
             else:
-                return (print(f"A conta não pode ter saldo positivo para encerrá-la"))
+                return "A conta não pode ter saldo positivo para encerrá-la"
         else:
             self.extrato.append(f"|Encerramento| Conta {self.__numero} foi reaberta| {day}")
             self.__active = True
+            return "Conta reaberta!"
 
     @property
     def juros(self):

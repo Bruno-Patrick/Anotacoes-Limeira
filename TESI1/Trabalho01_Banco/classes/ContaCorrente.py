@@ -12,7 +12,7 @@ class ContaCorrente(Conta):
 
     def sacar(self, value):
         if self.active == True:
-            if self.saldo < value:
+            if self.saldo < value+self.desconto:
                 return "Quantia insuficiente"
             else:
                 self.saldo = (self.saldo-(value + self.desconto))

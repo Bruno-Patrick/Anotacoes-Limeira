@@ -1,9 +1,6 @@
 from asyncio.windows_events import NULL
 import tkinter as tk
-from tkinter import EW, NS, ttk
-from tkinter import messagebox
-from tkinter import font
-from turtle import Turtle
+from tkinter import ttk, messagebox, font
 
 from Banco import Banco
 from Cliente import Cliente
@@ -36,7 +33,7 @@ class Display:
                 if (conta.active):
                     status = "Conta Ativa"
                 else:
-                    status = "Conta Fechada"
+                    status = "Conta Encerrada"
                 if isinstance(conta, ContaCorrente):
                     self.tvw_principal.insert('',tk.END,values=(
                         conta.numero,"Conta Corrente",f"{conta.saldo:,.2f}",status
@@ -134,6 +131,58 @@ class Display:
             self.cadastro_cliente.grid(row=2, column=0)
             self.cadastro_cliente = tk.Button(toplevel, text="Cancelar", command=toplevel.destroy)
             self.cadastro_cliente.grid(row=2, column=1)
+
+        def definir_juros():
+            bank = verify_bank()
+            if(bank):
+                toplevel = tk.Toplevel(self.display)
+                toplevel.title("Definir juros")
+                toplevel.grab_set()
+
+                self.lbl_saque = tk.Label(toplevel, text="Digite o valor:")
+                self.lbl_saque.grid(row=0, column=0)
+                self.entry_saque = tk.Entry(toplevel)
+                self.entry_saque.grid(row=0, column=1)
+
+                def confirmar():
+                    valor = float(self.entry_saque.get())
+                    confirm = messagebox.askyesno("Confirma?",f"Definir juros de {valor}%?")
+                    if confirm:
+                        self.banco.juros = valor
+                        messagebox.showinfo("Sucesso","Novos juros definido!", parent=toplevel)
+                        toplevel.destroy()
+                    else: toplevel.destroy()
+                    
+                self.btn_confirmar = tk.Button(toplevel, text='Confirmar!', bg='gray', command=confirmar)
+                self.btn_confirmar.grid(row=1, column=0)
+            else:
+                messagebox.showerror("ERROR!","DEFINA UM BANCO PARA PROSSEGUIR")
+
+        def definir_desconto():
+            bank = verify_bank()
+            if(bank):
+                toplevel = tk.Toplevel(self.display)
+                toplevel.title("Definir desconto")
+                toplevel.grab_set()
+
+                self.lbl_saque = tk.Label(toplevel, text="Digite o valor:")
+                self.lbl_saque.grid(row=0, column=0)
+                self.entry_saque = tk.Entry(toplevel)
+                self.entry_saque.grid(row=0, column=1)
+
+                def confirmar():
+                    valor = float(self.entry_saque.get())
+                    confirm = messagebox.askyesno("Confirma?",f"Definir desconto de {valor}?")
+                    if confirm:
+                        self.banco.desconto = valor
+                        messagebox.showinfo("Sucesso","Novo desconto definido!", parent=toplevel)
+                        toplevel.destroy()
+                    else: toplevel.destroy()
+                    
+                self.btn_confirmar = tk.Button(toplevel, text='Confirmar!', bg='gray', command=confirmar)
+                self.btn_confirmar.grid(row=1, column=0)
+            else:
+                messagebox.showerror("ERROR!","DEFINA UM BANCO PARA PROSSEGUIR")
 
         def treeview(toplevel):
             colunas = ['Cliente','Endereço' ,'CPF']
@@ -260,6 +309,8 @@ class Display:
         self.menu_config = tk.Menu(self.menuBarra, tearoff=0)
         self.menuBarra.add_cascade(label="Configurações do banco", menu=self.menu_config)
         self.menu_config.add_command(label="Definir banco", command=definir_banco)
+        self.menu_config.add_command(label="Definir juros", command=definir_juros)
+        self.menu_config.add_command(label="Definir desconto", command=definir_desconto)
 
         self.tvw_principal = ttk.Treeview(self.display)
         colunas = ['Conta','Modalidade','Saldo', "Status"]
@@ -289,7 +340,7 @@ class Display:
                 if len(selecao) != 1:
                     messagebox.showerror("Error","Selecione 1 conta somente!", parent=toplevel)
                 else:
-                    valor = int(self.entry_saque.get())
+                    valor = float(self.entry_saque.get())
                     confirm = messagebox.askyesno("Confirmação!",
                     f"Deseja efetuar saque de R${valor:,.2f}?", parent=toplevel)
 
@@ -299,10 +350,14 @@ class Display:
                             if conta.numero == int(item[0]):
                                 retorno = conta.sacar(valor)
                                 if retorno == True:
-                                    messagebox.showinfo("Secesso","Sucesso!")
+                                    messagebox.showinfo("Secesso","Sucesso!", parent=toplevel)
+                                    toplevel.destroy()
                                 else:
-                                    messagebox.showerror("Error",f"{retorno}")
+                                    messagebox.showerror("Error",f"{retorno}", parent=toplevel)
+                                    toplevel.destroy()
                                 atualizar_lista()
+                                break
+                            
             self.btn_confirmar = tk.Button(toplevel, text='Confirmar!', bg='gray', command=confirmar)
             self.btn_confirmar.grid(row=1, column=0)
 
@@ -321,7 +376,7 @@ class Display:
                 if len(selecao) != 1:
                     messagebox.showerror("Error","Selecione 1 conta somente!", parent=toplevel)
                 else:
-                    valor = int(self.entry_deposito.get())
+                    valor = float(self.entry_deposito.get())
                     confirm = messagebox.askyesno("Confirmação!",
                     f"Deseja efetuar depósito de R${valor:,.2f}?", parent=toplevel)
 
@@ -331,10 +386,13 @@ class Display:
                             if conta.numero == int(item[0]):
                                 retorno = conta.depositar(valor)
                                 if retorno == True:
-                                    messagebox.showinfo("Secesso","Sucesso!")
+                                    messagebox.showinfo("Secesso","Sucesso!", parent=toplevel)
+                                    toplevel.destroy()
                                 else:
-                                    messagebox.showerror("Error",f"{retorno}")
+                                    messagebox.showerror("Error",f"{retorno}", parent=toplevel)
+                                    toplevel.destroy()
                                 atualizar_lista()
+                                break
 
             self.btn_confirm = tk.Button(toplevel, text="Confirmar", bg="gray", command=confirmar)
             self.btn_confirm.grid(row=1, column=0)
@@ -350,9 +408,66 @@ class Display:
                         if isinstance(conta, ContaPoupaca):
                             messagebox.showinfo("Sucesso","Conta Atualizada!")
                             conta.atualiza()
+                            atualizar_lista()
                         else:
                             messagebox.showerror("Error", 
                             "Somente Conta Poupança pode usar 'atualizar'", parent= self.display)
+
+        def extrato():
+            selecao = self.tvw_principal.selection()
+            item = self.tvw_principal.item(selecao, "values")
+            if len(selecao) != 1:
+                messagebox.showerror("Error","Selecione 1 conta somente!", parent=self.display)
+            else:
+                toplevel = tk.Toplevel(self.display)
+                toplevel.minsize(700,500)
+                toplevel.title("Cadastro de Conta Corrente")
+                toplevel.grab_set()
+
+                colunas = ['Operação','Valores' ,'Data']
+                self.tvw = ttk.Treeview(toplevel, columns=colunas, show="headings")
+                self.tvw.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+                self.tvw.heading(colunas[0], text="Operação")
+                self.tvw.heading(colunas[1], text="Valores")
+                self.tvw.heading(colunas[2], text="Data")
+
+                self.tvw.column(column=[0], minwidth=0, width=300)
+                self.tvw.column(column=[1], minwidth=0, width=300)
+                self.tvw.column(column=[2], minwidth=0, width=150)
+
+                scrollbar = tk.Scrollbar(toplevel, command=self.tvw.yview)
+                scrollbar.pack(side=tk.LEFT, fill=tk.BOTH,expand=True)
+                self.tvw.configure(yscroll=scrollbar.set)
+
+                for conta in self.banco.contas:
+                    if conta.numero == int(item[0]):
+                        for mov in conta.extrato:
+                            frag = mov.split("|")
+                            self.tvw.insert('',tk.END,values=(frag[1],frag[2],frag[3]))
+                    break
+            
+                def gerar_arquivo():
+                    for conta in self.banco.contas:
+                        if conta.numero == int(item[0]):
+                            conta.imprimir_extrato()
+                            messagebox.showinfo("Feito!","Arquivo do extrato gerado!")
+
+                self.frmBtns = tk.Frame(toplevel)
+                self.frmBtns.pack(side=tk.LEFT, fill=tk.BOTH)
+                self.btnS1 = tk.Button(self.frmBtns, text="Gerar arquivo", command=gerar_arquivo)
+                self.btnS1.grid(row=0, column=0,ipady=10)
+
+        def encerrar_conta():
+            selecao = self.tvw_principal.selection()
+            item = self.tvw_principal.item(selecao, "values")
+            if len(selecao) != 1:
+                messagebox.showerror("Error","Selecione 1 conta somente!", parent=self.display)
+            else:
+                for conta in self.banco.contas:
+                    if conta.numero == int(item[0]):
+                        retorno = conta.change_active()
+                        messagebox.showinfo("Info",retorno, parent=self.display)
+                        atualizar_lista()
 
         self.frm_bp = tk.Frame(self.display)
         self.frm_bp.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -363,8 +478,12 @@ class Display:
         self.btn_sacar.grid(row=1, column=0, ipady=10, sticky=tk.EW)
         self.btn_depositar = tk.Button(self.frm_bp, text="Efetuar depósito!", command=depositar)
         self.btn_depositar.grid(row=1, column=1, ipady=10, sticky=tk.EW)
+        self.btn_extrato = tk.Button(self.frm_bp, text="Extrato", command=extrato)
+        self.btn_extrato.grid(row=2, column=0,ipady=10, sticky=tk.EW, columnspan=2)
         self.btn_atualizar = tk.Button(self.frm_bp, text="Atualização Mensal!", command=atualizacao_mensal)
         self.btn_atualizar.grid(row=3, column=0,ipady=10, sticky=tk.EW)
+        self.btn_encerrar = tk.Button(self.frm_bp, text="Encerrar conta", command=encerrar_conta)
+        self.btn_encerrar.grid(row=3, column=1,ipady=10, sticky=tk.EW)
 
         # Este frame está empurrando tudo para o topo da página >>>>>>>>>>>>>>>>>>>
         self.frm_empurra_cima = tk.Frame(self.display, height=self.alturaTotal)

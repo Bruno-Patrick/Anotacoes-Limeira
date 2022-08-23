@@ -38,7 +38,7 @@ class Banco:
     @desconto.setter
     def desconto(self, value):
         self.__desconto = value
-        self.fixar_desconto(self.__desconto)
+        self.fixar_desconto(self.desconto)
 
     @property
     def juros(self):
@@ -46,7 +46,7 @@ class Banco:
     @juros.setter
     def juros(self, value):
         self.__juros = value
-        self.fixar_juros(self.__juros)
+        self.fixar_juros(self.juros)
 
     @property
     def desconto(self):
@@ -57,10 +57,10 @@ class Banco:
 
     def fixar_juros(self, value):
         for conta in self.contas:
-            conta.__juros = value
+            conta.juros = value
     def fixar_desconto(self,value):
         for conta in self.contas:
-            conta.__desconto = value
+            conta.desconto = value
 
     def remover(self, cliente):
         for conta in self.contas:
