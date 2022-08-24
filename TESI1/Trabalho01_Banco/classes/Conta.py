@@ -81,7 +81,13 @@ class Conta(abc.ABC):
     @property
     def juros(self):
         return self.__juros
+    @juros.setter
+    def juros(self, value):
+        self.__juros = value
 
     @property
     def desconto(self):
         return self.__desconto
+    @desconto.setter
+    def desconto(self, value):
+        self.__desconto = value

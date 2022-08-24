@@ -165,13 +165,13 @@ class Display:
                 toplevel.title("Definir desconto")
                 toplevel.grab_set()
 
-                self.lbl_saque = tk.Label(toplevel, text="Digite o valor:")
-                self.lbl_saque.grid(row=0, column=0)
-                self.entry_saque = tk.Entry(toplevel)
-                self.entry_saque.grid(row=0, column=1)
+                self.lbl_desconto = tk.Label(toplevel, text="Digite o valor:")
+                self.lbl_desconto.grid(row=0, column=0)
+                self.entry_desconto = tk.Entry(toplevel)
+                self.entry_desconto.grid(row=0, column=1)
 
                 def confirmar():
-                    valor = float(self.entry_saque.get())
+                    valor = float(self.entry_desconto.get())
                     confirm = messagebox.askyesno("Confirma?",f"Definir desconto de {valor}?")
                     if confirm:
                         self.banco.desconto = valor
@@ -473,7 +473,7 @@ class Display:
         self.frm_bp.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         self.btn_atualizar = tk.Button(self.frm_bp, text="Atualizar lista!", command=atualizar_lista)
-        self.btn_atualizar.grid(row=0, column=0, ipady=10, sticky=tk.EW)
+        self.btn_atualizar.grid(row=0, column=0, ipady=10, sticky=tk.EW, columnspan=2)
         self.btn_sacar = tk.Button(self.frm_bp, text="Efetuar Saque!", command=sacar)
         self.btn_sacar.grid(row=1, column=0, ipady=10, sticky=tk.EW)
         self.btn_depositar = tk.Button(self.frm_bp, text="Efetuar depósito!", command=depositar)
@@ -487,7 +487,7 @@ class Display:
 
         # Este frame está empurrando tudo para o topo da página >>>>>>>>>>>>>>>>>>>
         self.frm_empurra_cima = tk.Frame(self.display, height=self.alturaTotal)
-        self.frm_empurra_cima.pack(side=tk.LEFT)
+        self.frm_empurra_cima.pack(side=tk.BOTTOM)
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 

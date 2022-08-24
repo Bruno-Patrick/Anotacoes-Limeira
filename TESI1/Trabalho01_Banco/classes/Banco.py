@@ -54,6 +54,7 @@ class Banco:
     @desconto.setter
     def desconto(self, value):
         self.__desconto = value
+        self.fixar_desconto(self.desconto)
 
     def fixar_juros(self, value):
         for conta in self.contas:
