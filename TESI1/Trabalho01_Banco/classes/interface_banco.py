@@ -1,6 +1,6 @@
-from asyncio.windows_events import NULL
 import tkinter as tk
 from tkinter import ttk, messagebox, font
+from tkinter.scrolledtext import ScrolledText
 
 from Banco import Banco
 from Cliente import Cliente
@@ -17,10 +17,10 @@ class Display:
         self.alturaTotal = self.display.winfo_screenheight()
         self.display.geometry("{0}x{1}+0+0".format(self.container, self.alturaTotal))
         self.clientes = []
-        self.banco = NULL
+        self.banco = False
 
         def verify_bank():
-            if self.banco == NULL:
+            if self.banco == False:
                 return False
             else:
                 return True
@@ -224,6 +224,7 @@ class Display:
                             for cliente in selecao:
                                 cc = ContaCorrente(cliente, 0)
                                 self.banco.contas.append(cc)
+                                self.banco.fixar_desconto(self.banco.desconto)
                                 atualizar_lista()
                                 toplevel.destroy()
                         else:
@@ -271,6 +272,7 @@ class Display:
                             for cliente in selecao:
                                 cc = ContaPoupaca(cliente, 0)
                                 self.banco.contas.append(cc)
+                                self.banco.fixar_juros()
                                 toplevel.destroy()
                         else:
                             messagebox.showinfo("Cancelado!","Operação cancelada!")
@@ -424,6 +426,8 @@ class Display:
                 toplevel.title("Cadastro de Conta Corrente")
                 toplevel.grab_set()
 
+                # self.sct = ScrolledText(toplevel)
+
                 colunas = ['Operação','Valores' ,'Data']
                 self.tvw = ttk.Treeview(toplevel, columns=colunas, show="headings")
                 self.tvw.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -442,9 +446,9 @@ class Display:
                 for conta in self.banco.contas:
                     if conta.numero == int(item[0]):
                         for mov in conta.extrato:
-                            frag = mov.split("|")
+                            frag = [x for x in mov.split("|")]
                             self.tvw.insert('',tk.END,values=(frag[1],frag[2],frag[3]))
-                    break
+                        break
             
                 def gerar_arquivo():
                     for conta in self.banco.contas:
