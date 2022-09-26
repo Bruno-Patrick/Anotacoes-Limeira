@@ -59,9 +59,18 @@ class Aluno:
             
     def add_notas(self, value, key = None):
         if isinstance(value, Notas):
-            if key == 'delete':
+            if key == 'del':
                 for data in self.notas:
                     if (data.disciplina == value.disciplina) and (data.nota == value.nota) and (data.aluno == value.aluno):
-                        self._notas.remove(data)
+                        self.notas.remove(data)
             else:
-                self._notas.append(value)
+                self.notas.append(value)
+
+    def add_disciplina(self, value, key = None):
+        if isinstance(value, Disciplinas):
+            if key == 'del':
+                for data in self.disciplinas:
+                    if (data.codigo == value.codigo):
+                        self.disciplinas.remove(data)
+            else:
+                self.disciplinas.append(value)

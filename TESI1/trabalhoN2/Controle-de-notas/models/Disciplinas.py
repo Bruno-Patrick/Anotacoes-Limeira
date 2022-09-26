@@ -1,10 +1,11 @@
 class Disciplinas:
 
-    __slots__ = ["_nome", "_ano", "_professor"]
-    def __init__(self, nome, ano, professor):
+    __slots__ = ["_nome", "_ano", "_professor","_codigo"]
+    def __init__(self, nome, ano, professor, codigo):
         self._nome = nome
         self._ano = ano
         self._professor = professor
+        self._codigo = codigo
 
     @property
     def nome(self):
@@ -15,6 +16,10 @@ class Disciplinas:
     @property
     def professor(self):
         return self._professor
+    @property
+    def codigo(self):
+        return self._codigo
+
 
     @nome.setter
     def nome(self, value):

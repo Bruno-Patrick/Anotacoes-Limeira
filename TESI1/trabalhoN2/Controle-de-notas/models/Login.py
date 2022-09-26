@@ -10,7 +10,7 @@ class Login:
     def encript(key):
 
         if not key:
-            raise Exception("key can't not be empty!")
+            raise Exception("key cannot be empty!")
 
         try:
             bytes = key.encode('utf-8')
@@ -22,9 +22,9 @@ class Login:
     def isKeyTrue(key, hash):
 
         if not key:
-            raise Exception("key can't not be empty!")
+            raise Exception("key cannot be empty!")
         if not hash:
-            raise Exception("hash can't not be empty!")
+            raise Exception("hash cannot be empty!")
 
         bytes = key.encode('utf-8')
         return bcrypt.checkpw(bytes, hash)
