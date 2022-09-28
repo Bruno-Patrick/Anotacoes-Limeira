@@ -30,26 +30,28 @@ class Connection:
         conn.close()
 
     def inserir(self, object):
-        if isinstance (object, Professor):
-            query = "INSERT INTO professor(nome, disciplina) VALUES ("
-            valores = []
-            for slot in object.__slots__:
-                attribute = object.__getattribute__(slot)
-                if isinstance(attribute, List):
-                    lista = []
-                    if len(attribute) == 0:
-                        valores.append("NULL")
-                    else:
-                        for i in attribute:
-                            lista.append(i)
-                        valor = ','.join(lista)
-                        valores.append(valor)
+        name = type(object).__name__
+        query = f"INSERT INTO {name.lower()}({','.join([x[1::] for x in object.__slots__])}) VALUES ("
+        valores = []
+        for slot in object.__slots__:
+            attribute = object.__getattribute__(slot)
+            if isinstance(attribute, List):
+                lista = []
+                if len(attribute) == 0:
+                    valores.append("NULL")
                 else:
-                    valores.append(attribute)
-
-            values = ','.join(valores)
-            query += f"{values});"
-            print(query)
+                    for i in attribute:
+                        lista.append(i)
+                    valor = ','.join(lista)
+                    valores.append(valor)
+            else:
+                valores.append(attribute)
+        values = "'"
+        values += "','".join(valores)
+        values += "'"
+        query += f"{values});"
+        print(query)
+        #self.operation(query)
 
 alunos = """CREATE TABLE IF NOT EXISTS 
     aluno(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -105,11 +107,15 @@ usuario = """CREATE TABLE IF NOT EXISTS
     """
 
 dd = Connection()
-prof = Professor("Bruno")
-dd.inserir(prof)
 dd.operation(alunos)
 dd.operation(responsavel)
 dd.operation(notas)
 dd.operation(disciplinas)
 dd.operation(professor)
 dd.operation(usuario)
+prof = Professor("Bruno")
+#dis = Disciplinas("TESI1",2022,"Limeira","CCET20",2)
+#prof.add_disciplina(dis)
+res = Responsavel("Bruno","(68)999010276","021996.bmx@gmail.com")
+dd.inserir(prof)
+dd.inserir(res)
