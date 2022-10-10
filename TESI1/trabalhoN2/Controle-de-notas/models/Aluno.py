@@ -1,13 +1,17 @@
 class Aluno:
      
-    __slots__ = ['_nome','_matricula','_telefone','_email','_responsavel']
+    __slots__ = ['_id','_nome','_matricula','_telefone','_email','_responsavel']
     def __init__(self, nome, matricula, telefone = None, email = None, responsavel = None):
+        self._id = None
         self._nome = nome
         self._matricula = matricula
         self._telefone = telefone
         self._email = email
         self._responsavel = responsavel
 
+    @property
+    def id(self):
+        return self._id
     @property
     def nome(self):
         return self._nome
@@ -24,6 +28,11 @@ class Aluno:
     def responsavel(self):
         return self._responsavel
 
+    @id.setter
+    def id(self, value):
+        if not value:
+            raise Exception("field nome cannot be empty!")
+        self._id = value
     @nome.setter
     def nome(self, value):
         if not value:

@@ -1,11 +1,15 @@
 class Responsavel:
     
-    __slots__ = ['_nome','_telefone','_email']
+    __slots__ = ['_id','_nome','_telefone','_email']
     def __init__(self, nome, telefone = None, email = None):
+        self._id = None
         self._nome = nome
         self._telefone = telefone
         self._email = email
 
+    @property
+    def id(self):
+        return self._id
     @property
     def nome(self):
         return self._nome
@@ -16,6 +20,11 @@ class Responsavel:
     def email(self):
         return self._email
 
+    @id.setter
+    def id(self, value):
+        if not value:
+            raise Exception("field cannot be empty!")
+        self._id = value
     @nome.setter
     def nome(self, value):
         if not value:

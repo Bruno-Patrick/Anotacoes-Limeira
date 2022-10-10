@@ -1,13 +1,17 @@
 class Disciplinas:
 
-    __slots__ = ["_nome", "_ano","_semestre", "_professor","_codigo"]
+    __slots__ = ["_id","_nome", "_ano","_semestre", "_professor","_codigo"]
     def __init__(self, nome, ano, semestre, professor, codigo):
+        self._id = None
         self._nome = nome
         self._ano = ano
         self._semestre = semestre
         self._professor = professor
         self._codigo = codigo
 
+    @property
+    def id(self):
+        return self._id
     @property
     def nome(self):
         return self._nome
@@ -22,6 +26,11 @@ class Disciplinas:
         return self._codigo
 
 
+    @id.setter
+    def id(self, value):
+        if not value:
+            raise Exception("field cannot be empty!")
+        self._id = value
     @nome.setter
     def nome(self, value):
         if not value:

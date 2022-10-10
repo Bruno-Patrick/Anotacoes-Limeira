@@ -63,6 +63,8 @@ class Display:
                     username = self.usernameEntry.get()
                     password = self.passwordEntry.get()
 
+                    professor = Professor(fullname)
+
                 self.buttonCadastrar = tk.Button(self.toplevelCadastro, text="Cadastrar!", command=confirmar)
                 self.buttonCadastrar.grid(row=2,column=0,sticky=EW)
 

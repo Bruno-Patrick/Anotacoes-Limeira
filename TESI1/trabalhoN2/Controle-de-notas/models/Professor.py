@@ -1,8 +1,18 @@
 class Professor:
 
-    __slots__ = ['_nome']
+    __slots__ = ['_id','_nome']
     def __init__(self, nome):
+        self._id = None
         self._nome = nome
+
+    @property
+    def id(self):
+        return self._id
+    @id.setter
+    def id(self, value):
+        if not value:
+            raise Exception("Field name cannot be empty!")
+        self._id = value
 
     @property
     def nome(self):

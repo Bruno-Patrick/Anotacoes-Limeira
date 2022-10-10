@@ -38,7 +38,7 @@ class Connection:
 
     def inserir(self, object):
         name = type(object).__name__
-        query = f"INSERT INTO {name.lower()}({','.join([x[1::] for x in object.__slots__])}) VALUES ("
+        query = f"INSERT INTO {name.lower()}({','.join([x[1::] for x in object.__slots__ if x != '_id'])}) VALUES ("
         valores = []
         for slot in object.__slots__:
             if not 'id' in slot:
@@ -60,7 +60,11 @@ class Connection:
         query = f"SELECT * FROM professor WHERE nome LIKE '{name}'"
         retorno = self.select(query)
         return retorno
-        
+
+    def getAllProfessores(self):
+        query = f"SELECT * FROM professor"
+        retorno = self.select(query)
+        return retorno        
 
 alunos = """CREATE TABLE IF NOT EXISTS 
     aluno(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -101,7 +105,7 @@ disciplinas = """CREATE TABLE IF NOT EXISTS
 professor = """
     CREATE TABLE IF NOT EXISTS 
     professor(id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome VARCHAR(60) NOT NULL UNIQUE)    """
+    nome VARCHAR(60) NOT NULL)    """
 
 usuario = """CREATE TABLE IF NOT EXISTS
     usuario(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -129,7 +133,11 @@ dd.operation(professor)
 dd.operation(usuario)
 dd.operation(alunodisciplinas)
 prof = Professor("Bruno")
+#for i in range(0,5):
+#    dd.inserir(prof)
+"""
 dis = Disciplinas("TESI1",2022,"Limeira","CCET20",2)
 res = Responsavel("Bruno","(68)999010276","021996.bmx@gmail.com")
 dd.inserir(prof)
 dd.inserir(res)
+"""
