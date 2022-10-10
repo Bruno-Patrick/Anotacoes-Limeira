@@ -1,6 +1,6 @@
 class Configuration:
 
-    __slots__ = ['_atvAmountPartialN1','_atvAmountPartialN2']
+    __slots__ = ['_atvAmountPartialN1','_atvAmountPartialN2', "_user"]
     def __init__(self, parcialN1, parcialN2, user):
         self._atvAmountPartialN1 = parcialN1
         self._atvAmountPartialN2 = parcialN2

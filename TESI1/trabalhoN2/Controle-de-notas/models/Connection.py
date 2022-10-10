@@ -1,10 +1,9 @@
+from select import select
 import sqlite3 as db
 from sqlite3 import Error
 import os, platform
-from typing import List
 from Aluno import Aluno
 from Disciplinas import Disciplinas
-from Notas import Notas
 from Responsavel import Responsavel
 from Professor import Professor
 
@@ -14,7 +13,7 @@ class Connection:
         OS = platform.system()
         dir_path = os.path.dirname(os.path.realpath(__file__))
         try:
-            if not 'Windows' in OS:
+            if not 'windows' in OS:
                 conn = db.connect(f"{dir_path}/alunos.db")
             else:
                 conn = db.connect(f"{dir_path}\alunos.db")
@@ -29,29 +28,39 @@ class Connection:
         conn.commit()
         conn.close()
 
+    def select(self, query):
+        conn = self.create_connection()
+        cursor = conn.cursor()
+        cursor.execute(query)
+        retorno = cursor.fetchall()
+        cursor.close()
+        return retorno
+
     def inserir(self, object):
         name = type(object).__name__
         query = f"INSERT INTO {name.lower()}({','.join([x[1::] for x in object.__slots__])}) VALUES ("
         valores = []
         for slot in object.__slots__:
-            attribute = object.__getattribute__(slot)
-            if isinstance(attribute, List):
-                lista = []
-                if len(attribute) == 0:
-                    valores.append("NULL")
-                else:
-                    for i in attribute:
-                        lista.append(i)
-                    valor = ','.join(lista)
-                    valores.append(valor)
-            else:
+            if not 'id' in slot:
+                attribute = object.__getattribute__(slot)
                 valores.append(attribute)
         values = "'"
         values += "','".join(valores)
         values += "'"
         query += f"{values});"
         print(query)
-        #self.operation(query)
+        self.operation(query)
+
+    def getHashByUserName(self, username):
+        query = f"SELECT hash FROM usuario WHERE username LIKE '{username}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getProfessorByName(self, name):
+        query = f"SELECT * FROM professor WHERE nome LIKE '{name}'"
+        retorno = self.select(query)
+        return retorno
+        
 
 alunos = """CREATE TABLE IF NOT EXISTS 
     aluno(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -59,12 +68,9 @@ alunos = """CREATE TABLE IF NOT EXISTS
     matricula INTEGER NOT NULL UNIQUE, 
     telefone VARCHAR(15),
     email VARCHAR(60), 
-    disciplinas INTEGER, 
     responsavel INTEGER,
     notas INTEGER,
-    FOREIGN KEY(disciplinas) REFERENCES disciplinas(id),
-    FOREIGN KEY(responsavel) REFERENCES responsavel(id),
-    FOREIGN KEY(notas) REFERENCES notas(id))"""
+    FOREIGN KEY(responsavel) REFERENCES responsavel(id))"""
 
 responsavel = """CREATE TABLE IF NOT EXISTS
     responsavel(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,22 +94,30 @@ disciplinas = """CREATE TABLE IF NOT EXISTS
     ano DATE NOT NULL,
     semestre INTEGER NOT NULL,
     professor INTEGER NOT NULL,
+    codigo VARCHAR(20) NOT NULL,
     FOREIGN KEY(professor) REFERENCES professor(id))
     """
 
 professor = """
-    CREATE TABLE IF NOT EXISTS professor(id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome VARCHAR(60) NOT NULL,
-    disciplinas INTEGER,
-    FOREIGN KEY(disciplinas) REFERENCES disciplinas(id))
-    """
+    CREATE TABLE IF NOT EXISTS 
+    professor(id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nome VARCHAR(60) NOT NULL UNIQUE)    """
 
 usuario = """CREATE TABLE IF NOT EXISTS
     usuario(id INTEGER PRIMARY KEY AUTOINCREMENT,
     hash VARCHAR(254) NOT NULL,
-    username VARCHAR(45),
+    username VARCHAR(45) UNIQUE,
     professor INTEGER NOT NULL,
     FOREIGN KEY(professor) REFERENCES professor(id))
+    """
+
+alunodisciplinas = """
+    CREATE TABLE IF NOT EXISTS
+    alunodisciplinas(id INTEGER PRIMARY KEY AUTOINCREMENT,
+    aluno INTEGER NOT NULL,
+    disciplina INTEGER NOT NULL,
+    FOREIGN KEY(aluno) REFERENCES aluno(id),
+    FOREIGN KEY(disciplina) REFERENCES disciplina(id))
     """
 
 dd = Connection()
@@ -113,9 +127,9 @@ dd.operation(notas)
 dd.operation(disciplinas)
 dd.operation(professor)
 dd.operation(usuario)
+dd.operation(alunodisciplinas)
 prof = Professor("Bruno")
-#dis = Disciplinas("TESI1",2022,"Limeira","CCET20",2)
-#prof.add_disciplina(dis)
+dis = Disciplinas("TESI1",2022,"Limeira","CCET20",2)
 res = Responsavel("Bruno","(68)999010276","021996.bmx@gmail.com")
 dd.inserir(prof)
 dd.inserir(res)
