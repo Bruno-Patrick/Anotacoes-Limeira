@@ -18,9 +18,13 @@ class Treeview:
         for num, column in enumerate(columns):
             tvw.heading(columns[num], text=f'{column}')
 
-    def column(self, tvw, columns):
-        for num, column in enumerate(columns):
-            tvw.heading(column[num], minwidth=150, width=150)           
+    def column(self, tvw, columns, *args):
+        for num in range(0, len(columns)):
+            for configurations in args:
+                if num == configurations[0]:
+                    tvw.column(column=[num], minwidth=configurations[1], width=configurations[2])           
+                else:
+                    tvw.column(column=[num], minwidth=0, width=150)           
 
     def atualizar(self, tvw, tupla):
         for i in tvw.get_children():
@@ -34,4 +38,9 @@ class Treeview:
             msg.showinfo("Operação não permitida!","Selecione apenas 1 professor!", parent=master)
         else:
             item = tvw.item(selecao, 'values')
-        return item
+            return item
+
+tvw = Treeview
+coluna = tvw.columnsgenerator('id','nome')
+for num, column in enumerate(coluna):
+    print(coluna[num])

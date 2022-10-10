@@ -133,7 +133,7 @@ dd.operation(professor)
 dd.operation(usuario)
 dd.operation(alunodisciplinas)
 prof = Professor("Bruno")
-#for i in range(0,5):
+# for i in range(0,5):
 #    dd.inserir(prof)
 """
 dis = Disciplinas("TESI1",2022,"Limeira","CCET20",2)

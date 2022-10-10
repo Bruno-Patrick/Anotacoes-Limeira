@@ -1,10 +1,11 @@
 import imp
 import tkinter as tk
-from tkinter import BOTH, EW, ttk, messagebox as msg
+from tkinter import BOTH, EW, LEFT, RIGHT, TOP, ttk, messagebox as msg
 from Login import Login
 from Connection import Connection
 from Professor import Professor
 from Usuario import Usuario
+from Treeview import Treeview
 
 class Display:
 
@@ -16,6 +17,7 @@ class Display:
         self.display.title("Controle de Notas Acadêmico")
         self.userSession = Login()
         self.bd = Connection()
+        self.createtvw = Treeview()
 
         if not self.userSession.isLogged:
             self.display.withdraw()
@@ -38,7 +40,7 @@ class Display:
                 self.toplevelLogin.withdraw()
                 self.toplevelCadastro = tk.Toplevel()
                 self.toplevelCadastro.title("Cadastro")
-                self.toplevelCadastro.geometry("300x200")
+                self.toplevelCadastro.minsize(100,300)
 
                 self.frametoplevelCadastro = tk.Frame()
                 self.frametoplevelCadastro.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -47,6 +49,47 @@ class Display:
                 self.fullnameEntry = tk.Entry(self.toplevelCadastro)
                 self.fullnameLabel.grid(row=0,column=0)
                 self.fullnameEntry.grid(row=0,column=1, sticky=EW)
+
+                def verificar():
+                    self.toplevelCadastro.iconify()
+                    self.toplevelVerificar = tk.Toplevel(self.toplevelCadastro)
+                    self.toplevelVerificar.minsize(300,300)
+                    self.toplevelVerificar.title("Lista de professores")
+
+                    self.labelTexto = tk.Label(self.toplevelVerificar, text="Qual desses é você?",font=13)
+                    self.labelTexto.pack()
+
+                    #Instanciando dinamicamente Treeview dos professores
+                    self.colunasVerificar = self.createtvw.columnsgenerator("id","nome")
+                    self.tvwVerificar = self.createtvw.instancetvw(self.toplevelVerificar,self.colunasVerificar)
+                    self.tvwVerificar.pack(side=LEFT, fill=BOTH)
+                    self.createtvw.heading(self.tvwVerificar,self.colunasVerificar)
+                    self.createtvw.column(self.tvwVerificar,self.colunasVerificar,(0,50,50))
+
+                    if not self.fullnameEntry.get():
+                        self.tupla = self.bd.getAllProfessores()
+                        self.createtvw.atualizar(self.tvwVerificar, self.tupla)
+                    else:
+                        self.tupla = self.bd.getProfessorByName(self.fullnameEntry.get())
+                        self.createtvw.atualizar(self.tvwVerificar, self.tupla)
+
+                    def callbackSelecionar():
+                        self.retorno = self.createtvw.selecionar(self.toplevelVerificar,self.tvwVerificar)
+                        
+
+                    self.buttonConfirmarProfessor = tk.Button(self.toplevelVerificar, text="selecionar", command=callbackSelecionar)
+                    self.buttonConfirmarProfessor.pack(side=tk.TOP)
+
+                    def voltar():
+                        self.toplevelCadastro.deiconify()
+                        self.toplevelVerificar.destroy()
+
+                    self.buttonVoltar = tk.Button(self.toplevelVerificar, text="voltar", command=voltar)
+                    self.buttonVoltar.pack(side=tk.TOP)
+
+
+                self.buttonVerificarfullname = tk.Button(self.toplevelCadastro,text="Verificar", command=verificar)
+                self.buttonVerificarfullname.grid(row=0,column=2)
 
                 self.usernameLabel = tk.Label(self.toplevelCadastro, text="username:")
                 self.usernameEntry = tk.Entry(self.toplevelCadastro)
@@ -63,17 +106,15 @@ class Display:
                     username = self.usernameEntry.get()
                     password = self.passwordEntry.get()
 
-                    professor = Professor(fullname)
-
                 self.buttonCadastrar = tk.Button(self.toplevelCadastro, text="Cadastrar!", command=confirmar)
-                self.buttonCadastrar.grid(row=2,column=0,sticky=EW)
+                self.buttonCadastrar.grid(row=3,column=0,sticky=EW)
 
                 def cancel():
                     self.toplevelCadastro.destroy()
                     self.toplevelLogin.deiconify()
 
                 self.buttonCancelar = tk.Button(self.toplevelCadastro, text="Cancelar!",command=cancel)
-                self.buttonCancelar.grid(row=2,column=1,sticky=EW)  
+                self.buttonCancelar.grid(row=3,column=1,sticky=EW)  
             
             self.toplevelLogin = tk.Toplevel()
             self.toplevelLogin.title("Login")
