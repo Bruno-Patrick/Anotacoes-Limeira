@@ -38,15 +38,15 @@ class Connection:
 
     def inserir(self, object):
         name = type(object).__name__
-        query = f"INSERT INTO {name.lower()}({','.join([x[1::] for x in object.__slots__ if x != '_id'])}) VALUES ("
+        query = f"""INSERT INTO {name.lower()}({','.join([x[1::] for x in object.__slots__ if x != '_id'])}) VALUES ("""
         valores = []
         for slot in object.__slots__:
             if not 'id' in slot:
                 attribute = object.__getattribute__(slot)
                 valores.append(attribute)
-        values = "'"
-        values += "','".join(valores)
-        values += "'"
+        values = '"'
+        values += '","'.join(valores)
+        values += '"'
         query += f"{values});"
         print(query)
         self.operation(query)
@@ -55,9 +55,14 @@ class Connection:
         query = f"SELECT hash FROM usuario WHERE username LIKE '{username}'"
         retorno = self.select(query)
         return retorno
+    
+    def getUserByUserName(self, username):
+        query = f"SELECT * FROM usuario WHERE username like '{username}'"
+        retorno = self.select(query)
+        return retorno
 
     def getProfessorByName(self, name):
-        query = f"SELECT * FROM professor WHERE nome LIKE '{name}'"
+        query = f"SELECT * FROM professor WHERE `nome` LIKE `{name}`"
         retorno = self.select(query)
         return retorno
 

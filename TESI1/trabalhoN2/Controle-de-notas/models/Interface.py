@@ -1,4 +1,6 @@
 import imp
+import bcrypt
+import sqlite3
 import tkinter as tk
 from tkinter import BOTH, EW, LEFT, RIGHT, TOP, ttk, messagebox as msg
 from Login import Login
@@ -6,6 +8,7 @@ from Connection import Connection
 from Professor import Professor
 from Usuario import Usuario
 from Treeview import Treeview
+from Functions import Functions
 
 class Display:
 
@@ -18,23 +21,34 @@ class Display:
         self.userSession = Login()
         self.bd = Connection()
         self.createtvw = Treeview()
+        self.function = Functions()
 
         if not self.userSession.isLogged:
             self.display.withdraw()
 
             def logar():
-                username = self.userEntryLogin.get()
-                password = self.passwordEntryLogin.get()
-
-                ishash = self.bd.getHashByUserName(username)
-                if not ishash:
-                    msg.showerror("","Usuário não encontrado!", parent=self.toplevelLogin)
-                else: 
-                    istrue = self.userSession.isKeyTrue(password, ishash)
-                    if istrue: self.userSession.login
-                    # self.userSession.user = 
-                    self.toplevelLogin.destroy()
-                    self.display.deiconify()
+                if self.function.isFieldsEmpty(
+                        self.toplevelLogin,
+                        self.userEntryLogin,
+                        self.passwordEntryLogin):
+                    msg.showerror("Operação não permitida","Informe um usuario e senha",parent=self.passwordEntryLogin)
+                else:
+                    self.usernameLogin = self.userEntryLogin.get()
+                    self.passwordLogin = self.passwordEntryLogin.get()
+                    self.isUser = self.bd.getUserByUserName(self.usernameLogin)
+                    if not self.isUser:
+                        msg.showerror("","Usuário não encontrado!", parent=self.toplevelLogin)
+                    else:
+                        # bytes = self.userSession.bytes(password)
+                        self.hashRetornado = self.isUser[0][1]
+                        # self.istrue = bcrypt.checkpw(b'12345', self.hashRetornado)
+                        if self.passwordLogin == self.hashRetornado: 
+                            self.userSession.login()
+                            # self.userLogin = Usuario(self.isUser[0][1],self.isUser[0][2],self.isUser[0][3])
+                            # self.userLogin.id = self.isUser[0][0]
+                            # self.userSession.user = self.userLogin
+                            self.toplevelLogin.destroy()
+                            self.display.deiconify()
 
             def cadastro():
                 self.toplevelLogin.withdraw()
@@ -74,8 +88,11 @@ class Display:
                         self.createtvw.atualizar(self.tvwVerificar, self.tupla)
 
                     def callbackSelecionar():
-                        self.retorno = self.createtvw.selecionar(self.toplevelVerificar,self.tvwVerificar)
-                        
+                        self.retornoCallback = self.createtvw.selecionar(self.toplevelVerificar,self.tvwVerificar)
+                        self.fullnameEntry.delete(0,tk.END)
+                        self.fullnameEntry.insert(0,self.retornoCallback[1])
+                        self.toplevelVerificar.destroy()
+                        self.toplevelCadastro.deiconify()
 
                     self.buttonConfirmarProfessor = tk.Button(self.toplevelVerificar, text="selecionar", command=callbackSelecionar)
                     self.buttonConfirmarProfessor.pack(side=tk.TOP)
@@ -101,12 +118,35 @@ class Display:
                 self.passwordLabel.grid(row=2,column=0)
                 self.passwordEntry.grid(row=2,column=1)
 
-                def confirmar():
-                    fullname = self.fullnameEntry.get()
+                def confirmarCadastro():
+                    try:
+                        professor = self.retornoCallback[0]
+                    except:
+                        professor = ''
                     username = self.usernameEntry.get()
                     password = self.passwordEntry.get()
-
-                self.buttonCadastrar = tk.Button(self.toplevelCadastro, text="Cadastrar!", command=confirmar)
+                    self.isEmpty = self.function.isFieldsEmpty(
+                        self.toplevelCadastro,
+                        self.usernameEntry,
+                        self.passwordEntry,
+                        self.fullnameEntry)
+                        
+                    if self.isEmpty:
+                        msg.showerror('Operação não permitida','Preencha todos os campos para continuar!',parent=self.toplevelCadastro)
+                    elif not professor:
+                        msg.showerror('Operação não permitida','Faça a verificação e selecione um professor válido',parent=self.toplevelCadastro)
+                    else:
+                        try:
+                            # self.hash = self.userSession.encript(password)
+                            query = f'INSERT INTO usuario(hash,username,professor) VALUES("{password}","{username}","{professor}")'
+                            self.bd.operation(query)
+                            msg.showinfo("Sucesso!","Usuário cadastrado com sucesso!",parent=self.toplevelCadastro)
+                            self.toplevelCadastro.destroy()
+                            self.toplevelLogin.deiconify()
+                        except sqlite3.IntegrityError:
+                            msg.showerror('Operação não permitida','Já existe um usuário com esse username!',parent=self.toplevelCadastro)
+                    
+                self.buttonCadastrar = tk.Button(self.toplevelCadastro, text="Cadastrar!", command=confirmarCadastro)
                 self.buttonCadastrar.grid(row=3,column=0,sticky=EW)
 
                 def cancel():

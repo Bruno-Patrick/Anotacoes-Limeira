@@ -1,8 +1,14 @@
-from Connection import Connection
-from Responsavel import Responsavel
+from Login import Login
 
-db = Connection()
-r = Responsavel('Bruno')
+login = Login()
+senha = '12345'
+a = login.encript(senha)
+b = login.encript(senha)
+c = login.encript(senha)
+print(a)
+print(b)
+print(c)
 
-obj = db.object_reader(r)
-db.print_generator(obj)
+print(login.isKeyTrue(senha,a))
+print(login.isKeyTrue(senha,b))
+print(login.isKeyTrue(senha,c))

@@ -23,20 +23,12 @@ class Login:
     def user(self, value):
         self._user = value
 
-    @isLogged.setter
-    def isLogged(self, value):
-        if value == True:
-            self._isLogged = True
-        elif value == False:
-            self._isLogged = False
-        else:
-            raise TypeError("Only 'true' or 'false' values!")
     def logout(self):
-        self.isLogged = False
+        self._isLogged = False
     def login(self):
-        self.isLogged = True
+        self._isLogged = True
 
-    def encript(key):
+    def encript(self,key):
 
         if not key:
             raise Exception("key cannot be empty!")
@@ -48,12 +40,20 @@ class Login:
         except Exception as err:
             print(err)
 
-    def isKeyTrue(key, hash):
+    def bytes(self, key):
+        bytes = key.encode('utf-8')
+        return bytes
+
+    def isKeyTrue(self, key, hash):
 
         if not key:
             raise Exception("key cannot be empty!")
         if not hash:
             raise Exception("hash cannot be empty!")
 
+        print(key)
+        print(type(key))
         bytes = key.encode('utf-8')
+        print(bytes)
+        print(type(bytes))
         return bcrypt.checkpw(bytes, hash)
