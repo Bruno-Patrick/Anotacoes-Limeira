@@ -9,6 +9,7 @@ class Login:
         self._user = None
 
 
+
     @property
     def isLogged(self):
         return self._isLogged
@@ -18,9 +19,11 @@ class Login:
     @property
     def user(self):
         return self._user
-
     @property
-    def user(self, value):
+    def getUserId(self):
+        return self._user.id
+
+    def set_user(self, value):
         self._user = value
 
     def logout(self):
@@ -50,10 +53,5 @@ class Login:
             raise Exception("key cannot be empty!")
         if not hash:
             raise Exception("hash cannot be empty!")
-
-        print(key)
-        print(type(key))
         bytes = key.encode('utf-8')
-        print(bytes)
-        print(type(bytes))
         return bcrypt.checkpw(bytes, hash)

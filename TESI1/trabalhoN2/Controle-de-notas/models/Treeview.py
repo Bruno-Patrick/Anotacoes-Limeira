@@ -7,7 +7,18 @@ class Treeview:
     def columnsgenerator(self,*args):
         columns = []
         for i in args:
-            columns.append(i)
+            if 'N1=' in i:
+                i = i.split('N1=')
+                i = i[1]
+                for j in range(0,int(i)):
+                    columns.append(f'atvN1.{j+1}')
+            elif 'N2=' in i:
+                i = i.split('N2=')
+                i = i[1]
+                for j in range(0,int(i)):
+                    columns.append(f'atvN2.{j+1}')
+            else:
+                columns.append(i)
         return columns
 
     def instancetvw(self, master, columns):
@@ -18,13 +29,16 @@ class Treeview:
         for num, column in enumerate(columns):
             tvw.heading(columns[num], text=f'{column}')
 
-    def column(self, tvw, columns, *args):
+    def column(self, tvw, columns):
         for num in range(0, len(columns)):
-            for configurations in args:
-                if num == configurations[0]:
-                    tvw.column(column=[num], minwidth=configurations[1], width=configurations[2])           
-                else:
-                    tvw.column(column=[num], minwidth=0, width=150)           
+            if columns[num] == 'id':
+                tvw.column(column=[num], minwidth=0, width=40)  
+            elif columns[num] == 'nome':
+                tvw.column(column=[num], minwidth=0, width=250)
+            elif 'atv' in columns[num]:
+                tvw.column(column=[num], minwidth=0, width=50)
+            else:
+                tvw.column(column=[num], minwidth=0, width=80)
 
     def atualizar(self, tvw, tupla):
         for i in tvw.get_children():

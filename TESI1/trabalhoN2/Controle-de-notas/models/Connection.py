@@ -1,7 +1,8 @@
-from select import select
 import sqlite3 as db
 from sqlite3 import Error
 import os, platform
+
+from Usuario import Usuario
 from Aluno import Aluno
 from Disciplinas import Disciplinas
 from Responsavel import Responsavel
@@ -62,7 +63,7 @@ class Connection:
         return retorno
 
     def getProfessorByName(self, name):
-        query = f"SELECT * FROM professor WHERE `nome` LIKE `{name}`"
+        query = f"SELECT * FROM professor WHERE nome LIKE '{name}%'"
         retorno = self.select(query)
         return retorno
 
@@ -71,6 +72,11 @@ class Connection:
         retorno = self.select(query)
         return retorno        
 
+    def getConfigurationsByUser(self, userId):
+        query = f"SELECT * FROM configurations WHERE usuario = '{userId}'"
+        retorno = self.select(query)
+        return retorno
+
 alunos = """CREATE TABLE IF NOT EXISTS 
     aluno(id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome VARCHAR(60) NOT NULL,
@@ -78,7 +84,6 @@ alunos = """CREATE TABLE IF NOT EXISTS
     telefone VARCHAR(15),
     email VARCHAR(60), 
     responsavel INTEGER,
-    notas INTEGER,
     FOREIGN KEY(responsavel) REFERENCES responsavel(id))"""
 
 responsavel = """CREATE TABLE IF NOT EXISTS
@@ -129,6 +134,15 @@ alunodisciplinas = """
     FOREIGN KEY(disciplina) REFERENCES disciplina(id))
     """
 
+configuration = """
+    CREATE TABLE IF NOT EXISTS
+    configurations(id INTEGER PRIMARY KEY AUTOINCREMENT,
+    atvAmountPartialN1 INTEGER,
+    atvAmountPartialN2 INTEGER,
+    usuario INTEGER NOT NULL,
+    FOREIGN KEY(usuario) REFERENCES usuario(id))
+    """
+
 dd = Connection()
 dd.operation(alunos)
 dd.operation(responsavel)
@@ -137,7 +151,11 @@ dd.operation(disciplinas)
 dd.operation(professor)
 dd.operation(usuario)
 dd.operation(alunodisciplinas)
+dd.operation(configuration)
 prof = Professor("Bruno")
+if not dd.getUserByUserName('admin'):
+    admin = Usuario('12345','admin','1')
+    dd.inserir(admin)
 # for i in range(0,5):
 #    dd.inserir(prof)
 """
