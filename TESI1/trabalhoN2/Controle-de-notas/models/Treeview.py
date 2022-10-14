@@ -19,6 +19,7 @@ class Treeview:
                     columns.append(f'atvN2.{j+1}')
             else:
                 columns.append(i)
+        print(columns)
         return columns
 
     def instancetvw(self, master, columns):

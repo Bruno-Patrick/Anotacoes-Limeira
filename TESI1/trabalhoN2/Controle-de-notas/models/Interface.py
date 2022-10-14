@@ -1,6 +1,3 @@
-import imp
-from turtle import title
-import bcrypt
 import sqlite3
 import tkinter as tk
 from tkinter import BOTH, EW, LEFT, RIGHT, TOP, ttk, messagebox as msg
@@ -9,9 +6,13 @@ from Configurations import Configurations
 from Login import Login
 from Connection import Connection
 from Professor import Professor
+from Disciplinas import Disciplinas
 from Usuario import Usuario
 from Treeview import Treeview
 from Functions import Functions
+
+from datetime import date
+
 
 class Display:
 
@@ -29,7 +30,101 @@ class Display:
         # if not self.userSession.isLogged:
         self.display.withdraw()
 
+        def tvw_disciplinas(master):
+            self.colunasDisciplinas = self.createtvw.columnsgenerator('id','nome')
+            self.tvwDisciplinas = self.createtvw.instancetvw(master, self.colunasDisciplinas)
+            self.tvwDisciplinas.pack(side=tk.TOP,fill=BOTH,expand=True)
+            self.createtvw.heading(self.tvwDisciplinas, self.colunasDisciplinas)
+            self.createtvw.column(self.tvwDisciplinas, self.colunasDisciplinas)
+
+        def atualizar_alunos():...
+
         def display_principal():
+            self.disciplinasByProfessor = self.bd.getDisciplinasbyProfessor(self.userSession.getUserId)
+            if not self.disciplinasByProfessor:
+                self.toplevelDisciplinas = tk.Toplevel(self.display)
+                self.toplevelDisciplinas.minsize(500,400)
+                self.toplevelDisciplinas.title("Sua disciplinas")
+
+                self.labelDisciplinas = tk.Label(self.toplevelDisciplinas, text="Aqui você poderá cadastrar as disciplinas que você leciona!")
+                self.labelDisciplinas.pack(side=tk.TOP)
+
+                self.frameButtonsDisciplinas = tk.Frame(self.toplevelDisciplinas)
+                self.frameButtonsDisciplinas.pack(side=tk.RIGHT, fill=BOTH)
+
+                def cadastrarDisciplina():
+                    self.toplevelDisciplinas.iconify()
+                    self.toplevelCadastroDisciplina = tk.Toplevel(self.toplevelDisciplinas)
+                    self.toplevelCadastroDisciplina.title("Cadastro de disciplinas")
+                    self.toplevelCadastroDisciplina.minsize(200,100)
+
+                    self.currentTime = date.today()
+                    self.currentTime = self.currentTime.year
+
+                    self.labelNomeDisciplina = tk.Label(self.toplevelCadastroDisciplina, text="Nome da Disciplina:")
+                    self.labelSemetreDisciplinas = tk.Label(self.toplevelCadastroDisciplina, text="Semestre da Disciplina:")
+                    self.labelAnoDisciplinas = tk.Label(self.toplevelCadastroDisciplina, text="Ano da Disciplina:")
+                    self.labelCodigoDisciplinas = tk.Label(self.toplevelCadastroDisciplina, text="Codigo da Disciplina:")
+
+                    self.labelNomeDisciplina.grid(row=0,column=0)
+                    self.labelSemetreDisciplinas.grid(row=1,column=0)
+                    self.labelAnoDisciplinas.grid(row=2,column=0)
+                    self.labelCodigoDisciplinas.grid(row=3,column=0)
+
+                    self.entryNomeDisciplina = tk.Entry(self.toplevelCadastroDisciplina,width=100)
+                    self.entrySemetreDisciplinas = tk.Entry(self.toplevelCadastroDisciplina,width=100)
+
+                    self.entryAnoDisciplinas = tk.Entry(self.toplevelCadastroDisciplina,width=100)
+                    self.entryAnoDisciplinas.insert(0, self.currentTime)
+
+                    self.entryCodigoDisciplinas = tk.Entry(self.toplevelCadastroDisciplina,width=100)
+
+                    self.entryNomeDisciplina.grid(row=0,column=1)
+                    self.entrySemetreDisciplinas.grid(row=1,column=1)
+                    self.entryAnoDisciplinas.grid(row=2,column=1)
+                    self.entryCodigoDisciplinas.grid(row=3,column=1)
+
+                    def confirmar():
+                    
+                        self.isEmpty = self.function.isFieldsEmpty(
+                            self.entryNomeDisciplina,
+                            self.entrySemetreDisciplinas,
+                            self.entryAnoDisciplinas,
+                            self.entryCodigoDisciplinas)
+
+                        if self.isEmpty: msg.showerror('Operação não permitida',
+                            'Preencha todos os campos para continuar', parent=self.toplevelCadastroDisciplina)
+                        else:
+                            self.Vnomedisciplina = self.entryNomeDisciplina.get()
+                            self.Vsemestredisciplina = self.entrySemetreDisciplinas.get()
+                            self.Vanodisciplina = self.entryAnoDisciplinas.get()
+                            self.Vcodigodisciplina = self.entryCodigoDisciplinas.get()
+                            self.Vprofessordisciplina = self.userSession.getUserId
+                            
+                            self.newDisciplina = Disciplinas(self.Vnomedisciplina,
+                                self.Vanodisciplina,
+                                self.Vsemestredisciplina,
+                                self.Vprofessordisciplina,
+                                self.Vcodigodisciplina)
+                            self.bd.inserir(self.newDisciplina)
+
+                            self.disciplinasByProfessor = self.bd.getDisciplinasbyProfessor(self.userSession.getUserId)
+                            self.createtvw.atualizar(self.tvwDisciplinas,self.disciplinasByProfessor)
+
+                            self.toplevelCadastroDisciplina.destroy()
+                            self.toplevelDisciplinas.deiconify()
+
+
+                    self.buttonConfirmar = tk.Button(self.toplevelCadastroDisciplina,text='confirmar',command=confirmar)
+                    self.buttonConfirmar.grid(row=0,column=2)
+
+                self.buttonNewDisciplina = tk.Button(self.frameButtonsDisciplinas, text="Cadastrar", command=cadastrarDisciplina)
+                self.buttonNewDisciplina.grid(row=0,column=0)
+
+                tvw_disciplinas(self.toplevelDisciplinas)
+                
+
+            self.display.deiconify()
             #Contruindo Treeview para exibição dos alunos
             self.userConfigurations = self.bd.getConfigurationsByUser(self.userSession.getUserId)
             self.colunasTvwAlunos = self.createtvw.columnsgenerator(
@@ -38,16 +133,18 @@ class Display:
                 f'N1={self.userConfigurations[0][1]}',
                 'N1',f'N2={self.userConfigurations[0][2]}',
                 'N2',
-                'Prova Final')
-            print(self.colunasTvwAlunos)
+                'Media Final',
+                'Prova Final',
+                'Situação Final')
             self.tvwAlunos = self.createtvw.instancetvw(self.display,self.colunasTvwAlunos)
             self.tvwAlunos.pack(side=tk.TOP,fill=BOTH,expand=True)
             self.createtvw.heading(self.tvwAlunos,self.colunasTvwAlunos)
             self.createtvw.column(self.tvwAlunos,self.colunasTvwAlunos)
 
+
+
         def logar():
             if self.function.isFieldsEmpty(
-                    self.toplevelLogin,
                     self.userEntryLogin,
                     self.passwordEntryLogin):
                 msg.showerror("Operação não permitida","Informe um usuario e senha",parent=self.passwordEntryLogin)
@@ -113,7 +210,6 @@ class Display:
                                     self.configs = Configurations(str(self.N1amount), str(self.N2amount), str(self.userSession.getUserId))
                                     self.bd.inserir(self.configs)
                                     self.toplevelConfigurations.destroy()
-                                    self.display.deiconify()
                                     display_principal()
 
 
@@ -121,7 +217,6 @@ class Display:
                             self.buttonSaveConfiguration.grid(row=0,column=2,rowspan=2)
 
                         else:
-                            self.display.deiconify()
                             display_principal()                           
 
                     else:
@@ -240,7 +335,6 @@ class Display:
                 username = self.usernameEntry.get()
                 password = self.passwordEntry.get()
                 self.isEmpty = self.function.isFieldsEmpty(
-                    self.toplevelCadastro,
                     self.usernameEntry,
                     self.passwordEntry,
                     self.fullnameEntry)

@@ -4,7 +4,7 @@ from tkinter import ttk, messagebox as msg
 
 class Functions:
 
-    def isFieldsEmpty(self, master, *args):
+    def isFieldsEmpty(self, *args):
         for field in args:
             if not field.get():
                 return True

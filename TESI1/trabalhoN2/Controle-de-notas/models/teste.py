@@ -1,3 +1,4 @@
+from typing import Any, Callable
 from Login import Login
 
 login = Login()
@@ -7,6 +8,8 @@ a = login.encript(senha)
 # c = login.encript(senha)
 a = str(a)
 a = a.encode('utf-8')
+
+def confirmar(n1,n2,command: str | Callable[[], Any]):...
 
 # print(b)
 # print(c)

@@ -44,7 +44,7 @@ class Connection:
         for slot in object.__slots__:
             if not 'id' in slot:
                 attribute = object.__getattribute__(slot)
-                valores.append(attribute)
+                valores.append(str(attribute))
         values = '"'
         values += '","'.join(valores)
         values += '"'
@@ -76,6 +76,13 @@ class Connection:
         query = f"SELECT * FROM configurations WHERE usuario = '{userId}'"
         retorno = self.select(query)
         return retorno
+
+    def getDisciplinasbyProfessor(self, professorId):
+        query = f"SELECT * FROM disciplinas WHERE professor = '{professorId}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getAlunosForTvw(self, professorId, disciplinaId):...
 
 alunos = """CREATE TABLE IF NOT EXISTS 
     aluno(id INTEGER PRIMARY KEY AUTOINCREMENT,
