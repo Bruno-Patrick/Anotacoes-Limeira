@@ -1,3 +1,4 @@
+from random import random
 import sqlite3 as db
 from sqlite3 import Error
 import os, platform
@@ -77,12 +78,36 @@ class Connection:
         retorno = self.select(query)
         return retorno
 
-    def getDisciplinasbyProfessor(self, professorId):
-        query = f"SELECT * FROM disciplinas WHERE professor = '{professorId}'"
+    def getDisciplinasbyProfessor(self, professorId, semestre=None, ano=None, codigo=None):
+        query = f"""SELECT * FROM disciplinas WHERE 
+            `professor` = '{professorId}'
+            {"".join([x for x in f"AND `semestre`= '{semestre}'" if semestre])}
+            {"".join([x for x in f"AND `ano`= '{ano}'" if ano])}
+            {"".join([x for x in f"AND `codigo`= '{codigo}'" if codigo])}"""
         retorno = self.select(query)
         return retorno
 
-    def getAlunosForTvw(self, professorId, disciplinaId):...
+    def getAlunoByNome(self, nome: str = ...):
+        query = f"SELECT * FROM aluno WHERE nome = '{nome}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getAlunoDisciplinas(self, alunoID, disciplinaID):
+        query = f"SELECT * FROM alunodisciplinas WHERE aluno = '{alunoID}' AND disciplina = '{disciplinaID}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getAlunosForTvw(self, disciplinaId):
+        query = f"""SELECT aluno.id, aluno.nome FROM 
+        aluno INNER JOIN alunodisciplinas
+        ON aluno.id = aluno AND disciplina = '{disciplinaId}'
+        """
+        retorno = self.select(query)
+        return retorno
+
+    def alterConfigurationsByUser(self, userId, N1Amount, N2Amount):
+        query = f"UPDATE configurations SET `atvAmountPartialN1` = '{N1Amount}', `atvAmountPartialN2` = '{N2Amount}' WHERE `usuario` = '{userId}'"
+        self.operation(query)
 
 alunos = """CREATE TABLE IF NOT EXISTS 
     aluno(id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -105,6 +130,7 @@ notas = """CREATE TABLE IF NOT EXISTS
     disciplina INTEGER NOT NULL,
     aluno INTEGER NOT NULL,
     nota FLOAT(3,2) NOT NULL,
+    identificador VARCHAR(15) NOT NULL,
     FOREIGN KEY(disciplina) REFERENCES disciplinas(id),
     FOREIGN KEY(aluno) REFERENCES alunos(id)
     )"""
@@ -141,7 +167,7 @@ alunodisciplinas = """
     FOREIGN KEY(disciplina) REFERENCES disciplina(id))
     """
 
-configuration = """
+configurations = """
     CREATE TABLE IF NOT EXISTS
     configurations(id INTEGER PRIMARY KEY AUTOINCREMENT,
     atvAmountPartialN1 INTEGER,
@@ -158,11 +184,24 @@ dd.operation(disciplinas)
 dd.operation(professor)
 dd.operation(usuario)
 dd.operation(alunodisciplinas)
-dd.operation(configuration)
+dd.operation(configurations)
 prof = Professor("Bruno")
+
 if not dd.getUserByUserName('admin'):
     admin = Usuario('12345','admin','1')
     dd.inserir(admin)
+
+if not dd.getAlunoByNome('bruno'):
+    for i in range(0,10):
+        matricula = random()
+        aluno = Aluno('bruno',matricula)
+        dd.inserir(aluno)
+
+brunos = dd.getAlunoByNome('bruno')
+for aluno in range(0, 5):
+    if not dd.getAlunoDisciplinas(brunos[aluno][0],1):
+        dd.operation(F"INSERT INTO alunodisciplinas(aluno,disciplina) VALUES('{brunos[aluno][0]}','1')")
+
 # for i in range(0,5):
 #    dd.inserir(prof)
 """

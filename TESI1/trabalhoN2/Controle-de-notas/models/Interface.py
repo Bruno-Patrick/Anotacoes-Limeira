@@ -2,8 +2,12 @@ import sqlite3
 import tkinter as tk
 from tkinter import BOTH, EW, LEFT, RIGHT, TOP, ttk, messagebox as msg
 
+
+from Notas import Notas
+
 from Configurations import Configurations
 from Login import Login
+from Aluno import Aluno
 from Connection import Connection
 from Professor import Professor
 from Disciplinas import Disciplinas
@@ -26,9 +30,50 @@ class Display:
         self.bd = Connection()
         self.createtvw = Treeview()
         self.function = Functions()
+        self.currentTime = date.today()
+        self.currentTime = self.currentTime.year
+        
 
         # if not self.userSession.isLogged:
         self.display.withdraw()
+
+        def cadastrar_aluno(master):
+            self.toplevelCadastroAluno = tk.Toplevel(master)
+            self.toplevelCadastroAluno.minsize(200,100)
+            self.toplevelCadastroAluno.title("Cadastro de Alunos")
+
+            self.labelNomeAluno = tk.Label(self.toplevelCadastroAluno, text="Nome completo:")
+            self.labelMatriculaAluno = tk.Label(self.toplevelCadastroAluno, text="Nº de Matrícula:")
+            self.labelTelefoneAluno = tk.Label(self.toplevelCadastroAluno, text="Nº de telefone (OPICIONAL):")
+            self.labelEmailAluno = tk.Label(self.toplevelCadastroAluno, text="Email (OPICIONAL):")
+
+            self.labelNomeAluno.grid(row=0,column=0)
+            self.labelMatriculaAluno.grid(row=1,column=0)
+            self.labelTelefoneAluno.grid(row=2,column=0)
+            self.labelEmailAluno.grid(row=3,column=0)
+
+            self.entryNomeAluno = tk.Entry(self.toplevelCadastroAluno,width=100)
+            self.entryMatriculaAluno = tk.Entry(self.toplevelCadastroAluno,width=100)
+            self.entryTelefoneAluno = tk.Entry(self.toplevelCadastroAluno,width=100)
+            self.entryEmailAluno = tk.Entry(self.toplevelCadastroAluno,width=100)
+
+            self.entryNomeAluno.grid(row=0,column=1)
+            self.entryMatriculaAluno.grid(row=1,column=1)
+            self.entryTelefoneAluno.grid(row=2,column=1)
+            self.entryEmailAluno.grid(row=3,column=1)
+
+            def cadastrar_aluno():
+                self.isEmpty = self.function.isFieldsEmpty(
+                    self.entryNomeAluno,
+                    self.entryMatriculaAluno,
+                )
+                if self.isEmpty: msg.showerror("Operação cancelada!","Nome e Matrícula são obrigatórios!",parent=self.toplevelCadastroAluno)
+                else:
+                    self.aluno = Aluno(self.entryNomeAluno.get(),self.entryMatriculaAluno.get(),self.entryTelefoneAluno.get(),self.entryEmailAluno.get())
+
+            self.buttonCadastrarAluno = tk.Button(self.toplevelCadastroAluno,text="Salvar!",command=cadastrar_aluno)
+            self.buttonCadastrarAluno.grid(row=0,column=2,columnspan=2)
+            # self.labelResponsavelAluno
 
         def tvw_disciplinas(master):
             self.colunasDisciplinas = self.createtvw.columnsgenerator('id','nome')
@@ -39,27 +84,28 @@ class Display:
 
         def atualizar_alunos():...
 
-        def display_principal():
-            self.disciplinasByProfessor = self.bd.getDisciplinasbyProfessor(self.userSession.getUserId)
-            if not self.disciplinasByProfessor:
-                self.toplevelDisciplinas = tk.Toplevel(self.display)
-                self.toplevelDisciplinas.minsize(500,400)
-                self.toplevelDisciplinas.title("Sua disciplinas")
+        def tvw_alunos():
+                self.userConfigurations = self.bd.getConfigurationsByUser(self.userSession.getUserId)
+                self.colunasTvwAlunos = self.createtvw.columnsgenerator(
+                    'id',
+                    'nome',
+                    f'N1={self.userConfigurations[0][1]}',
+                    'N1',f'N2={self.userConfigurations[0][2]}',
+                    'N2',
+                    'Media Final',
+                    'Prova Final',
+                    'Situação Final')
+                self.tvwAlunos = self.createtvw.instancetvw(self.display,self.colunasTvwAlunos)
+                self.tvwAlunos.pack(side=tk.TOP,fill=BOTH,expand=True)
+                self.createtvw.heading(self.tvwAlunos,self.colunasTvwAlunos)
+                self.createtvw.column(self.tvwAlunos,self.colunasTvwAlunos)
 
-                self.labelDisciplinas = tk.Label(self.toplevelDisciplinas, text="Aqui você poderá cadastrar as disciplinas que você leciona!")
-                self.labelDisciplinas.pack(side=tk.TOP)
 
-                self.frameButtonsDisciplinas = tk.Frame(self.toplevelDisciplinas)
-                self.frameButtonsDisciplinas.pack(side=tk.RIGHT, fill=BOTH)
-
-                def cadastrarDisciplina():
-                    self.toplevelDisciplinas.iconify()
+        def cadastrarDisciplina():
+                    # self.toplevelDisciplinas.iconify()
                     self.toplevelCadastroDisciplina = tk.Toplevel(self.toplevelDisciplinas)
                     self.toplevelCadastroDisciplina.title("Cadastro de disciplinas")
                     self.toplevelCadastroDisciplina.minsize(200,100)
-
-                    self.currentTime = date.today()
-                    self.currentTime = self.currentTime.year
 
                     self.labelNomeDisciplina = tk.Label(self.toplevelCadastroDisciplina, text="Nome da Disciplina:")
                     self.labelSemetreDisciplinas = tk.Label(self.toplevelCadastroDisciplina, text="Semestre da Disciplina:")
@@ -112,36 +158,113 @@ class Display:
                             self.createtvw.atualizar(self.tvwDisciplinas,self.disciplinasByProfessor)
 
                             self.toplevelCadastroDisciplina.destroy()
-                            self.toplevelDisciplinas.deiconify()
+                            # self.toplevelDisciplinas.deiconify()
+                            self.display.deiconify()
 
 
                     self.buttonConfirmar = tk.Button(self.toplevelCadastroDisciplina,text='confirmar',command=confirmar)
                     self.buttonConfirmar.grid(row=0,column=2)
 
+        def configurations(key: str = ...):
+            self.isConfiguration = self.bd.getConfigurationsByUser(self.userSession.getUserId)
+            # Tela para fazer a configuração inicial
+            self.toplevelConfigurations = tk.Toplevel(self.display)
+            self.toplevelConfigurations.title("Configurações iniciais")
+            self.toplevelConfigurations.geometry("500x100")
+
+            self.labelConfigurations1 = tk.Label(self.toplevelConfigurations,
+            text="Bem vindo!", font=10)
+            self.labelConfigurations1.pack(side=tk.TOP)
+
+            self.labelConfigurations2 = tk.Label(self.toplevelConfigurations,
+            text="Indique a quantidade de atividades que fará para N1 e para N2", font=10)
+            self.labelConfigurations2.pack(side=tk.TOP)
+
+            self.frameConfigurations = tk.Frame(self.toplevelConfigurations)
+            self.frameConfigurations.pack(side=tk.LEFT)
+
+            self.labelN1 = tk.Label(self.frameConfigurations, text="Quantidade de atividades para N1:")
+            self.labelN1.grid(row=0,column=0)
+
+            self.EntryN1 = tk.Entry(self.frameConfigurations, width=20)
+            self.EntryN1.grid(row=0,column=1)
+            self.EntryN1.insert(0, '0')
+
+            self.labelN2 = tk.Label(self.frameConfigurations, text="Quantidade de atividades para N2:")
+            self.labelN2.grid(row=1,column=0)
+
+            self.EntryN2 = tk.Entry(self.frameConfigurations, width=20)
+            self.EntryN2.grid(row=1,column=1)
+            self.EntryN2.insert(0, '0')
+
+            def saveConfiguration():
+                self.N1amount = self.EntryN1.get()
+                self.N2amount = self.EntryN2.get()
+                
+                if msg.askyesno('Confirme os dados',
+                f'Quantidade de atividades para N1: {self.N1amount} \nQuantidade de atividades para N2: {self.N2amount}'):
+                    
+                    self.configs = Configurations(str(self.N1amount), str(self.N2amount), str(self.userSession.getUserId))
+                    self.bd.inserir(self.configs)
+
+                    self.toplevelConfigurations.destroy()
+                    display_principal()
+
+            def alterConfiguration():
+                self.N1amount = self.EntryN1.get()
+                self.N2amount = self.EntryN2.get()
+                
+                if msg.askyesno('Confirme os dados',
+                    f'Quantidade de atividades para N1: {self.N1amount} \nQuantidade de atividades para N2: {self.N2amount}'):
+
+                    self.bd.alterConfigurationsByUser(self.userSession.getUserId,self.N1amount,self.N2amount)
+                    self.toplevelConfigurations.destroy()
+                    msg.showinfo('Aviso!','Reinicie a aplicação para aplicar as mudanças!',parent=self.display)
+
+            if key == 'alter':
+                self.buttonSaveConfiguration = tk.Button(self.frameConfigurations, text="Salvar!",command=alterConfiguration)
+            else:
+                self.buttonSaveConfiguration = tk.Button(self.frameConfigurations, text="Salvar!",command=saveConfiguration)
+            self.buttonSaveConfiguration.grid(row=0,column=2,rowspan=2)  
+
+        def display_principal():
+            self.disciplinasByProfessor = self.bd.getDisciplinasbyProfessor(self.userSession.getUserId)
+            if not self.disciplinasByProfessor:
+                self.toplevelDisciplinas = tk.Toplevel(self.display)
+                self.toplevelDisciplinas.minsize(500,400)
+                self.toplevelDisciplinas.title("Sua disciplinas")
+
+                self.labelDisciplinas = tk.Label(self.toplevelDisciplinas, text="Aqui você poderá cadastrar as disciplinas que você leciona!")
+                self.labelDisciplinas.pack(side=tk.TOP)
+
+                self.frameButtonsDisciplinas = tk.Frame(self.toplevelDisciplinas)
+                self.frameButtonsDisciplinas.pack(side=tk.RIGHT, fill=BOTH)
+
+                self.display.withdraw()
+                cadastrarDisciplina()
+
                 self.buttonNewDisciplina = tk.Button(self.frameButtonsDisciplinas, text="Cadastrar", command=cadastrarDisciplina)
                 self.buttonNewDisciplina.grid(row=0,column=0)
 
                 tvw_disciplinas(self.toplevelDisciplinas)
+            else:
+                self.display.deiconify()
                 
+            # Menu principal
+            self.menuBarra = tk.Menu(self.display)
+            self.menu_cadastro = tk.Menu(self.menuBarra, tearoff=0)
+            self.menu_cadastro.add_command(label="Mudar quantidade de parciais", command=lambda: configurations(key='alter'))
+            self.menuBarra.add_cascade(label="Configurações", menu=self.menu_cadastro)
+            self.display.config(menu=self.menuBarra)
+            self.menu_config = tk.Menu(self.menuBarra, tearoff=0)
 
-            self.display.deiconify()
             #Contruindo Treeview para exibição dos alunos
-            self.userConfigurations = self.bd.getConfigurationsByUser(self.userSession.getUserId)
-            self.colunasTvwAlunos = self.createtvw.columnsgenerator(
-                'id',
-                'nome',
-                f'N1={self.userConfigurations[0][1]}',
-                'N1',f'N2={self.userConfigurations[0][2]}',
-                'N2',
-                'Media Final',
-                'Prova Final',
-                'Situação Final')
-            self.tvwAlunos = self.createtvw.instancetvw(self.display,self.colunasTvwAlunos)
-            self.tvwAlunos.pack(side=tk.TOP,fill=BOTH,expand=True)
-            self.createtvw.heading(self.tvwAlunos,self.colunasTvwAlunos)
-            self.createtvw.column(self.tvwAlunos,self.colunasTvwAlunos)
-
-
+            self.disciplinaAtual = self.bd.getDisciplinasbyProfessor(self.userSession.getUserId,ano=self.currentTime)
+            self.alunosByDisciplina = self.bd.getAlunosForTvw(self.disciplinaAtual[0][0])
+            if not self.alunosByDisciplina:
+                cadastrar_aluno(self.display)
+            else:
+                tvw_alunos()
 
         def logar():
             if self.function.isFieldsEmpty(
@@ -165,59 +288,12 @@ class Display:
                         self.userSession.set_user(self.userLogin)
                         self.toplevelLogin.destroy()
 
-                        # A partir daqui inicia-se interface do usuário logado
-
                         # Verificando se o usuario já informou a quantidade de parciais
-                        self.isConfiguration = self.bd.getConfigurationsByUser(self.userSession.getUserId)
-                        if not self.isConfiguration:
-                            # Tela para fazer a configuração inicial
-                            self.toplevelConfigurations = tk.Toplevel(self.display)
-                            self.toplevelConfigurations.title("Configurações iniciais")
-                            self.toplevelConfigurations.geometry("500x100")
-
-                            self.labelConfigurations1 = tk.Label(self.toplevelConfigurations,
-                            text="Bem vindo!", font=10)
-                            self.labelConfigurations1.pack(side=tk.TOP)
-
-                            self.labelConfigurations2 = tk.Label(self.toplevelConfigurations,
-                            text="Indique a quantidade de atividades que fará para N1 e para N2", font=10)
-                            self.labelConfigurations2.pack(side=tk.TOP)
-
-                            self.frameConfigurations = tk.Frame(self.toplevelConfigurations)
-                            self.frameConfigurations.pack(side=tk.LEFT)
-
-                            self.labelN1 = tk.Label(self.frameConfigurations, text="Quantidade de atividades para N1:")
-                            self.labelN1.grid(row=0,column=0)
-
-                            self.EntryN1 = tk.Entry(self.frameConfigurations, width=20)
-                            self.EntryN1.grid(row=0,column=1)
-                            self.EntryN1.insert(0, '0')
-
-                            self.labelN2 = tk.Label(self.frameConfigurations, text="Quantidade de atividades para N2:")
-                            self.labelN2.grid(row=1,column=0)
-
-                            self.EntryN2 = tk.Entry(self.frameConfigurations, width=20)
-                            self.EntryN2.grid(row=1,column=1)
-                            self.EntryN2.insert(0, '0')
-
-                            def saveConfiguration():
-                                self.N1amount = self.EntryN1.get()
-                                self.N2amount = self.EntryN2.get()
-                                
-                                if msg.askyesno('Confirme os dados',
-                                f'Quantidade de atividades para N1: {self.N1amount} \nQuantidade de atividades para N2: {self.N2amount}'):
-                                    
-                                    self.configs = Configurations(str(self.N1amount), str(self.N2amount), str(self.userSession.getUserId))
-                                    self.bd.inserir(self.configs)
-                                    self.toplevelConfigurations.destroy()
-                                    display_principal()
-
-
-                            self.buttonSaveConfiguration = tk.Button(self.frameConfigurations, text="Salvar!",command=saveConfiguration)
-                            self.buttonSaveConfiguration.grid(row=0,column=2,rowspan=2)
-
+                        if not self.bd.getConfigurationsByUser(self.userSession.getUserId):
+                            configurations()
                         else:
-                            display_principal()                           
+                            display_principal()
+                            self.display.deiconify()
 
                     else:
                         msg.showerror("","Usuário ou senha incorretas!", parent=self.toplevelLogin)

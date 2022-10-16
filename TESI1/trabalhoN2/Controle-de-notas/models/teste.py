@@ -1,19 +1,8 @@
-from typing import Any, Callable
-from Login import Login
+def teste(professorId,semestre: int = None, ano=None):
+    query = f"""SELECT * FROM disciplinas WHERE 
+            `professor` = '{professorId}'
+            {"".join([x for x in f"AND `semestre`= '{semestre}'" if semestre])}
+            {"".join([x for x in f"AND `ano`= '{ano}'" if ano])}"""
+    return(print(query))
 
-login = Login()
-senha = '12345'
-a = login.encript(senha)
-# b = login.encript(senha)
-# c = login.encript(senha)
-a = str(a)
-a = a.encode('utf-8')
-
-def confirmar(n1,n2,command: str | Callable[[], Any]):...
-
-# print(b)
-# print(c)
-
-print(login.isKeyTrue(senha,a))
-# print(login.isKeyTrue(senha,b))
-# print(login.isKeyTrue(senha,c))
+teste(1, ano=2022, semestre=2)

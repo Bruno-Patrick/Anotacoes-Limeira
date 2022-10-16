@@ -1,11 +1,12 @@
 class Notas:
 
-    __slots__ = ['_id','_disciplina','_nota','_aluno']
-    def __init__(self, disciplina, nota, aluno):
+    __slots__ = ['_id','_disciplina','_nota','_aluno','_identificador']
+    def __init__(self, disciplina, nota, aluno, identificador):
         self._id = None
         self._disciplina = disciplina
         self._nota = nota
         self._aluno = aluno
+        self._identificador = identificador
 
     @property
     def id(self):
@@ -19,6 +20,9 @@ class Notas:
     @property
     def aluno(self):
         return self._aluno
+    @property
+    def identificador(self):
+        return self._identificador
 
     @id.setter
     def id(self, value):
@@ -32,3 +36,6 @@ class Notas:
     @aluno.setter
     def aluno(self, value):
         self._aluno = value
+    @identificador.setter
+    def identificador(self, value):
+        self._identificador = value

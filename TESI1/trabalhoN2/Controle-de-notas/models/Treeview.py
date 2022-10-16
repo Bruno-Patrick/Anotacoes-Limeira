@@ -33,11 +33,11 @@ class Treeview:
     def column(self, tvw, columns):
         for num in range(0, len(columns)):
             if columns[num] == 'id':
-                tvw.column(column=[num], minwidth=0, width=40)  
+                tvw.column(column=[num], minwidth=0, width=30)  
             elif columns[num] == 'nome':
                 tvw.column(column=[num], minwidth=0, width=250)
             elif 'atv' in columns[num]:
-                tvw.column(column=[num], minwidth=0, width=50)
+                tvw.column(column=[num], minwidth=0, width=30)
             else:
                 tvw.column(column=[num], minwidth=0, width=80)
 
