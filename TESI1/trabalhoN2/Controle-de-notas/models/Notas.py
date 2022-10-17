@@ -1,5 +1,16 @@
 class Notas:
 
+    """
+        #Identificadores:
+            #Observações: x é uma variável
+            atvN1.x = atividade parcial da N1 Nº x,
+            atvN2.x = atividade parcial da N2 Nº x,
+            N1 = Nota da N1,
+            N2 = Nota da N2,
+            media final = Nota da media final,
+            situacao = Situação final do aluno
+
+    """
     __slots__ = ['_id','_disciplina','_nota','_aluno','_identificador']
     def __init__(self, disciplina, nota, aluno, identificador):
         self._id = None

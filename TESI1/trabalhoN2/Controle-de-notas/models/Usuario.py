@@ -1,7 +1,7 @@
 class Usuario:
 
     __slots__ = ["_id","_hash","_username","_professor"]
-    def __init__(self, hash, username, professor):
+    def __init__(self, hash, username, professor = None):
         self._id = None
         self._hash = hash
         self._username = username

@@ -4,9 +4,9 @@ class Login:
 
     __slots__ = ["_isLogged", "_userActive","_user"]
     def __init__(self):
-        self._isLogged = False
-        self._userActive = True
-        self._user = None
+        self._isLogged: bool = False
+        self._userActive: bool = True
+        self._user: object = None
 
 
 
@@ -22,6 +22,9 @@ class Login:
     @property
     def getUserId(self):
         return self._user.id
+    @property
+    def getProfessorID(self):
+        return self._user.professor
 
     def set_user(self, value):
         self._user = value

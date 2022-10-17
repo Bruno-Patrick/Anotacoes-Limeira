@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
 from tkinter import BOTH, EW, LEFT, RIGHT, TOP, ttk, messagebox as msg
+from turtle import width
 
 
 from Notas import Notas
@@ -70,6 +71,13 @@ class Display:
                 if self.isEmpty: msg.showerror("Operação cancelada!","Nome e Matrícula são obrigatórios!",parent=self.toplevelCadastroAluno)
                 else:
                     self.aluno = Aluno(self.entryNomeAluno.get(),self.entryMatriculaAluno.get(),self.entryTelefoneAluno.get(),self.entryEmailAluno.get())
+                    self.entryNomeAluno.delete(0,"end")
+                    self.entryMatriculaAluno.delete(0,"end")
+                    self.entryTelefoneAluno.delete(0,"end")
+                    self.entryEmailAluno.delete(0,"end")
+                    self.bd.inserir(self.aluno)
+                    msg.showinfo("Sucesso","Aluno cadastrado com sucesso!",parent=self.toplevelCadastroAluno)
+                    
 
             self.buttonCadastrarAluno = tk.Button(self.toplevelCadastroAluno,text="Salvar!",command=cadastrar_aluno)
             self.buttonCadastrarAluno.grid(row=0,column=2,columnspan=2)
@@ -145,7 +153,7 @@ class Display:
                             self.Vsemestredisciplina = self.entrySemetreDisciplinas.get()
                             self.Vanodisciplina = self.entryAnoDisciplinas.get()
                             self.Vcodigodisciplina = self.entryCodigoDisciplinas.get()
-                            self.Vprofessordisciplina = self.userSession.getUserId
+                            self.Vprofessordisciplina = self.userSession.getProfessorID
                             
                             self.newDisciplina = Disciplinas(self.Vnomedisciplina,
                                 self.Vanodisciplina,
@@ -259,12 +267,103 @@ class Display:
             self.menu_config = tk.Menu(self.menuBarra, tearoff=0)
 
             #Contruindo Treeview para exibição dos alunos
-            self.disciplinaAtual = self.bd.getDisciplinasbyProfessor(self.userSession.getUserId,ano=self.currentTime)
             self.alunosByDisciplina = self.bd.getAlunosForTvw(self.disciplinaAtual[0][0])
             if not self.alunosByDisciplina:
                 cadastrar_aluno(self.display)
             else:
                 tvw_alunos()
+
+        def cadastrar_aluno():
+                self.isEmpty = self.function.isFieldsEmpty(
+                    self.entryNomeAluno,
+                    self.entryMatriculaAluno,
+                )
+                if self.isEmpty: msg.showerror("Operação cancelada!","Nome e Matrícula são obrigatórios!",parent=self.toplevelPrincipal)
+                else:
+                    self.aluno = Aluno(self.entryNomeAluno.get(),self.entryMatriculaAluno.get(),self.entryTelefoneAluno.get(),self.entryEmailAluno.get())
+                    self.entryNomeAluno.delete(0,"end")
+                    self.entryMatriculaAluno.delete(0,"end")
+                    self.entryTelefoneAluno.delete(0,"end")
+                    self.entryEmailAluno.delete(0,"end")
+                    self.bd.inserir(self.aluno)
+                    msg.showinfo("Sucesso","Aluno cadastrado com sucesso!",parent=self.toplevelPrincipal)
+
+        def tela_principal():
+            self.toplevelPrincipal = tk.Toplevel()
+            self.toplevelPrincipal.minsize(100,100)
+            self.toplevelPrincipal.title("Controle de Notas")
+
+            self.frameprincipal = tk.Frame(self.toplevelPrincipal)
+            self.frameprincipal.pack(side=tk.LEFT)
+
+            self.labelinformacao = tk.Label(self.frameprincipal,text="Cadastre novos alunos aqui:",font=10)
+            self.labelinformacao.grid(row=0,column=0,columnspan=3)
+
+            self.labelNomeAluno = tk.Label(self.frameprincipal, text="Nome completo:")
+            self.labelMatriculaAluno = tk.Label(self.frameprincipal, text="Nº de Matrícula:")
+            self.labelTelefoneAluno = tk.Label(self.frameprincipal, text="Nº de telefone (OPICIONAL):")
+            self.labelEmailAluno = tk.Label(self.frameprincipal, text="Email (OPICIONAL):")
+            self.labelDisciplina = tk.Label(self.frameprincipal, text="Disciplina:")
+
+            self.labelNomeAluno.grid(row=1,column=0)
+            self.labelMatriculaAluno.grid(row=2,column=0)
+            self.labelTelefoneAluno.grid(row=3,column=0)
+            self.labelEmailAluno.grid(row=4,column=0)
+            self.labelDisciplina.grid(row=5,column=0)
+
+            self.entryNomeAluno = tk.Entry(self.frameprincipal,width=60,font="arial 8 bold")
+            self.entryMatriculaAluno = tk.Entry(self.frameprincipal,width=60,font="arial 8 bold")
+            self.entryTelefoneAluno = tk.Entry(self.frameprincipal,width=60,font="arial 8 bold")
+            self.entryEmailAluno = tk.Entry(self.frameprincipal,width=60,font="arial 8 bold")
+            self.entryDisciplina = tk.Entry(self.frameprincipal,width=60,font="arial 8 bold",state="disabled")
+
+            self.entryNomeAluno.grid(row=1,column=1)
+            self.entryMatriculaAluno.grid(row=2,column=1)
+            self.entryTelefoneAluno.grid(row=3,column=1)
+            self.entryEmailAluno.grid(row=4,column=1)
+            self.entryDisciplina.grid(row=5,column=1)
+                  
+            self.buttonCadastrarAluno = tk.Button(self.frameprincipal,text="Salvar!",command=cadastrar_aluno)
+            self.buttonCadastrarAluno.grid(row=1,column=2,columnspan=2)
+
+            def associar():
+                self.toplevelDisciplinas = tk.Toplevel(self.toplevelPrincipal)
+                self.toplevelDisciplinas.title("associação de alunos")
+                self.toplevelDisciplinas.minsize(400,300)
+
+                self.frameAssociar = tk.Frame(self.toplevelDisciplinas)
+                self.frameAssociar.pack(side=tk.TOP)
+
+                self.labelNomeD = tk.Label(self.frameAssociar,text="Nome:")
+                self.labelAnoD = tk.Label(self.frameAssociar,text="Ano:")
+                self.labelSemestreD = tk.Label(self.frameAssociar,text="Semestre:")
+
+                self.entryNomeD = tk.Entry(self.frameAssociar,width=50)
+                self.entryAnoD = tk.Entry(self.frameAssociar,width=10)
+                self.entrySemestreD = tk.Entry(self.frameAssociar,width=10)
+
+                self.labelNomeD.grid(row=0,column=0)          
+                self.entryNomeD.grid(row=0,column=1)
+
+                self.labelAnoD.grid(row=0,column=2)               
+                self.entryAnoD.grid(row=0,column=3)                
+
+                self.labelSemestreD.grid(row=0,column=4)          
+                self.entrySemestreD.grid(row=0,column=5)                
+
+                self.colunastvwassociar = self.createtvw.columnsgenerator('id','nome','ano','semestre')
+                self.tvwassociar = self.createtvw.instancetvw(self.toplevelDisciplinas,self.colunastvwassociar)
+                self.tvwassociar.pack(fill=tk.BOTH)
+                self.createtvw.heading(self.tvwassociar,self.colunastvwassociar)
+                self.createtvw.column(self.tvwassociar,self.colunastvwassociar)
+
+                self.disciplinasByprofessor = self.bd.getDisciplinasbyProfessor(self.userSession.getProfessorID,ano=self.currentTime)
+                self.createtvw.atualizar(self.tvwassociar,self.disciplinasByprofessor)
+
+
+            self.buttonAssociar = tk.Button(self.frameprincipal,text="Associar aluno à disciplina!",command=associar)
+            self.buttonAssociar.grid(row=5,column=2)
+
 
         def logar():
             if self.function.isFieldsEmpty(
@@ -283,146 +382,60 @@ class Display:
                     # self.istrue = bcrypt.checkpw(b'12345', self.hashRetornado)
                     if self.passwordLogin == self.hashRetornado: 
                         self.userSession.login()
+
+                        # Construção de um objeto usuário para ser inserido no cache de sessão do usuário
                         self.userLogin = Usuario(self.isUser[0][1],self.isUser[0][2],self.isUser[0][3])
                         self.userLogin.id = self.isUser[0][0]
                         self.userSession.set_user(self.userLogin)
+
+                        # Assim que fizer login, será instânciado algumas variável globais
+                        self.disciplinaAtual = self.bd.getDisciplinasbyProfessor(self.userSession.getProfessorID,ano=self.currentTime) #Primeira disciplina que o banco devolver, no ano atual
+
                         self.toplevelLogin.destroy()
 
                         # Verificando se o usuario já informou a quantidade de parciais
                         if not self.bd.getConfigurationsByUser(self.userSession.getUserId):
                             configurations()
                         else:
-                            display_principal()
-                            self.display.deiconify()
+                            tela_principal()
+                            # display_principal()
+                            # self.display.deiconify()
 
                     else:
                         msg.showerror("","Usuário ou senha incorretas!", parent=self.toplevelLogin)
 
         def cadastro():
             self.toplevelLogin.withdraw()
-            self.toplevelCadastro = tk.Toplevel()
-            self.toplevelCadastro.title("Cadastro")
-            self.toplevelCadastro.minsize(100,300)
+            self.toplevelCadastro = tk.Toplevel(self.toplevelLogin)
+            self.toplevelCadastro.title("Cadastro de novo usuário")
+            self.toplevelCadastro.minsize(100,100)
 
             self.frametoplevelCadastro = tk.Frame()
             self.frametoplevelCadastro.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-            self.fullnameLabel = tk.Label(self.toplevelCadastro, text="Nome completo:")
-            self.fullnameEntry = tk.Entry(self.toplevelCadastro)
-            self.fullnameLabel.grid(row=0,column=0)
-            self.fullnameEntry.grid(row=0,column=1, sticky=EW)
-
-            def verificar():
-                self.toplevelCadastro.iconify()
-                self.toplevelVerificar = tk.Toplevel(self.toplevelCadastro)
-                self.toplevelVerificar.minsize(300,300)
-                self.toplevelVerificar.title("Lista de professores")
-
-                self.labelTexto = tk.Label(self.toplevelVerificar, text="Qual desses é você?",font=13)
-                self.labelTexto.pack()
-
-                #Instanciando dinamicamente Treeview dos professores
-                self.colunasVerificar = self.createtvw.columnsgenerator("id","nome")
-                self.tvwVerificar = self.createtvw.instancetvw(self.toplevelVerificar,self.colunasVerificar)
-                self.tvwVerificar.pack(side=LEFT, fill=BOTH)
-                self.createtvw.heading(self.tvwVerificar,self.colunasVerificar)
-                self.createtvw.column(self.tvwVerificar,self.colunasVerificar)
-
-                if not self.fullnameEntry.get():
-                    self.tupla = self.bd.getAllProfessores()
-                    self.createtvw.atualizar(self.tvwVerificar, self.tupla)
-                else:
-                    self.tupla = self.bd.getProfessorByName(self.fullnameEntry.get())
-                    self.createtvw.atualizar(self.tvwVerificar, self.tupla)
-
-                def callbackSelecionar():
-                    self.retornoCallback = self.createtvw.selecionar(self.toplevelVerificar,self.tvwVerificar)
-                    self.fullnameEntry.delete(0,tk.END)
-                    self.fullnameEntry.insert(0,self.retornoCallback[1])
-                    self.toplevelVerificar.destroy()
-                    self.toplevelCadastro.deiconify()
-
-                self.buttonConfirmarProfessor = tk.Button(self.toplevelVerificar, text="selecionar", command=callbackSelecionar)
-                self.buttonConfirmarProfessor.pack(side=tk.TOP)
-
-                def voltar():
-                    self.toplevelCadastro.deiconify()
-                    self.toplevelVerificar.destroy()
-
-                self.buttonVoltar = tk.Button(self.toplevelVerificar, text="voltar", command=voltar)
-                self.buttonVoltar.pack(side=tk.TOP)
-
-                def cadastrarProfessor():
-                    self.toplevelVerificar.iconify()
-                    self.toplevelCadastroProfessor = tk.Toplevel(self.toplevelVerificar)
-                    self.toplevelCadastroProfessor.title("Cadastro de professor")
-                    self.toplevelCadastroProfessor.minsize(100,100)
-
-                    self.labelNomeProfessor = tk.Label(self.toplevelCadastroProfessor, text="Nome:")
-                    self.labelNomeProfessor.grid(row=0,column=0)
-
-                    self.entryNomeProfessor = tk.Entry(self.toplevelCadastroProfessor)
-                    self.entryNomeProfessor.grid(row=0,column=1)
-
-                    def salvarProfessor():
-                        self.nomeProfessor = self.entryNomeProfessor.get()
-                        if self.nomeProfessor == '':
-                            msg.showerror("Operação cancelada","Digite um nome válido para continuar",parent=self.toplevelCadastroProfessor)
-                        else:
-                            self.newProfessor =  Professor(self.nomeProfessor)
-                            self.bd.inserir(self.newProfessor)
-                            self.toplevelCadastroProfessor.destroy()
-                            self.tupla = self.bd.getAllProfessores()
-                            self.createtvw.atualizar(self.tvwVerificar, self.tupla)
-                            self.toplevelVerificar.deiconify()
-
-
-                    self.buttonSaveProfessor = tk.Button(self.toplevelCadastroProfessor, text="Salvar!",command=salvarProfessor)
-                    self.buttonSaveProfessor.grid(row=0,column=2)
-
-                    def cancelarCadastroProfessor():
-                        self.toplevelCadastroProfessor.destroy()
-                        self.toplevelVerificar.deiconify()
-                        
-                    self.cancelarCadastroProfessor = tk.Button(self.toplevelCadastroProfessor, text="Cancelar!",command=cancelarCadastroProfessor)
-                    self.cancelarCadastroProfessor.grid(row=0,column=3)
-
-                self.buttonCadastrarProfessor = tk.Button(self.toplevelVerificar, text="Cadastrar professor", command=cadastrarProfessor)
-                self.buttonCadastrarProfessor.pack(side=tk.TOP)
-
-            self.buttonVerificarfullname = tk.Button(self.toplevelCadastro,text="Verificar", command=verificar)
-            self.buttonVerificarfullname.grid(row=0,column=2)
-
             self.usernameLabel = tk.Label(self.toplevelCadastro, text="username:")
-            self.usernameEntry = tk.Entry(self.toplevelCadastro)
-            self.usernameLabel.grid(row=1,column=0)
-            self.usernameEntry.grid(row=1,column=1, sticky=EW)
+            self.usernameEntry = tk.Entry(self.toplevelCadastro, width=60)
+            self.usernameLabel.grid(row=0,column=0)
+            self.usernameEntry.grid(row=0,column=1, sticky=EW)
 
             self.passwordLabel = tk.Label(self.toplevelCadastro, text="password:")
-            self.passwordEntry = tk.Entry(self.toplevelCadastro)
-            self.passwordLabel.grid(row=2,column=0)
-            self.passwordEntry.grid(row=2,column=1)
+            self.passwordEntry = tk.Entry(self.toplevelCadastro, width=60)
+            self.passwordLabel.grid(row=1,column=0)
+            self.passwordEntry.grid(row=1,column=1)
 
             def confirmarCadastro():
-                try:
-                    professor = self.retornoCallback[0]
-                except:
-                    professor = ''
                 username = self.usernameEntry.get()
                 password = self.passwordEntry.get()
+
                 self.isEmpty = self.function.isFieldsEmpty(
                     self.usernameEntry,
-                    self.passwordEntry,
-                    self.fullnameEntry)
+                    self.passwordEntry)
                     
                 if self.isEmpty:
                     msg.showerror('Operação não permitida','Preencha todos os campos para continuar!',parent=self.toplevelCadastro)
-                elif not professor:
-                    msg.showerror('Operação não permitida','Faça a verificação e selecione um professor válido',parent=self.toplevelCadastro)
                 else:
                     try:
-                        # self.hash = self.userSession.encript(password)
-                        query = f'INSERT INTO usuario(hash,username,professor) VALUES("{password}","{username}","{professor}")'
+                        query = f'INSERT INTO usuario(hash,username,professor) VALUES("{password}","{username}","None")'
                         self.bd.operation(query)
                         msg.showinfo("Sucesso!","Usuário cadastrado com sucesso!",parent=self.toplevelCadastro)
                         self.toplevelCadastro.destroy()
@@ -431,18 +444,18 @@ class Display:
                         msg.showerror('Operação não permitida','Já existe um usuário com esse username!',parent=self.toplevelCadastro)
                 
             self.buttonCadastrar = tk.Button(self.toplevelCadastro, text="Cadastrar!", command=confirmarCadastro)
-            self.buttonCadastrar.grid(row=3,column=0,sticky=EW)
+            self.buttonCadastrar.grid(row=0,column=2)
 
             def cancel():
                 self.toplevelCadastro.destroy()
                 self.toplevelLogin.deiconify()
 
-            self.buttonCancelar = tk.Button(self.toplevelCadastro, text="Cancelar!",command=cancel)
-            self.buttonCancelar.grid(row=3,column=1,sticky=EW)  
+            self.buttonCancelCadastro = tk.Button(self.toplevelCadastro, text="Cancelar!", command=cancel)
+            self.buttonCancelCadastro.grid(row=1,column=2)
         
         self.toplevelLogin = tk.Toplevel()
         self.toplevelLogin.title("Login")
-        self.toplevelLogin.geometry("300x200")
+        self.toplevelLogin.minsize(1,1)
 
         self.frametoplevelLogin = tk.Frame(self.toplevelLogin)
         self.frametoplevelLogin.pack(side=tk.LEFT,fill=BOTH, expand=True)
@@ -462,9 +475,6 @@ class Display:
 
         self.buttonCadastro = tk.Button(self.frametoplevelLogin, text="Criar cadastro", command=cadastro)
         self.buttonCadastro.grid(row = 2, column = 1, sticky=EW)
-
-        self.buttonCancelar = tk.Button(self.frametoplevelLogin, text="Cancelar!", command=self.display.destroy)
-        self.buttonCancelar.grid(row=3,column=0,sticky=EW)
 
 app = tk.Tk()
 Display(app)

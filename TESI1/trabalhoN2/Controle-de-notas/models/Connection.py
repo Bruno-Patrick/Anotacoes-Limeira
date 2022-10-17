@@ -45,6 +45,8 @@ class Connection:
         for slot in object.__slots__:
             if not 'id' in slot:
                 attribute = object.__getattribute__(slot)
+                if not attribute:
+                    attribute = 'None'
                 valores.append(str(attribute))
         values = '"'
         values += '","'.join(valores)
@@ -80,6 +82,15 @@ class Connection:
 
     def getDisciplinasbyProfessor(self, professorId, semestre=None, ano=None, codigo=None):
         query = f"""SELECT * FROM disciplinas WHERE 
+            `professor` = '{professorId}'
+            {"".join([x for x in f"AND `semestre`= '{semestre}'" if semestre])}
+            {"".join([x for x in f"AND `ano`= '{ano}'" if ano])}
+            {"".join([x for x in f"AND `codigo`= '{codigo}'" if codigo])}"""
+        retorno = self.select(query)
+        return retorno
+
+    def getDisciplinasForTvwByProfessor(self, professorId, semestre=None, ano=None, codigo=None):
+        query = f"""SELECT id,nome,ano,semestre FROM disciplinas WHERE 
             `professor` = '{professorId}'
             {"".join([x for x in f"AND `semestre`= '{semestre}'" if semestre])}
             {"".join([x for x in f"AND `ano`= '{ano}'" if ano])}
