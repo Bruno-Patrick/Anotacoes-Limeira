@@ -55,6 +55,12 @@ class Treeview:
             item = tvw.item(selecao, 'values')
             return item
 
+    def selecionarVarios(self, tvw):
+        selecao = tvw.selection()
+        for dados in selecao:
+            item = tvw.item(dados, 'values')
+            yield item
+
 tvw = Treeview
 coluna = tvw.columnsgenerator('id','nome')
 for num, column in enumerate(coluna):

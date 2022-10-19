@@ -56,12 +56,12 @@ class Connection:
         self.operation(query)
 
     def getHashByUserName(self, username):
-        query = f"SELECT hash FROM usuario WHERE username LIKE '{username}'"
+        query = f"SELECT hash FROM usuario WHERE username LIKE '{username}%'"
         retorno = self.select(query)
         return retorno
     
     def getUserByUserName(self, username):
-        query = f"SELECT * FROM usuario WHERE username like '{username}'"
+        query = f"SELECT * FROM usuario WHERE username LIKE '{username}'"
         retorno = self.select(query)
         return retorno
 
@@ -70,13 +70,23 @@ class Connection:
         retorno = self.select(query)
         return retorno
 
+    def getNomeProfessorByID(self, professorID):
+        query = f"SELECT nome FROM professor WHERE id = '{professor}'"
+        retorno = self.select(query)
+        return retorno
+
     def getAllProfessores(self):
         query = f"SELECT * FROM professor"
         retorno = self.select(query)
         return retorno        
 
-    def getConfigurationsByUser(self, userId):
-        query = f"SELECT * FROM configurations WHERE usuario = '{userId}'"
+    def getConfigurationsByDisciplina(self, disciplinaID):
+        query = f"SELECT * FROM configurations WHERE disciplina = '{disciplinaID}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getAllDisciplinas(self):
+        query = "SELECT * FROM disciplinas"
         retorno = self.select(query)
         return retorno
 
@@ -89,9 +99,10 @@ class Connection:
         retorno = self.select(query)
         return retorno
 
-    def getDisciplinasForTvwByProfessor(self, professorId, semestre=None, ano=None, codigo=None):
+    def getDisciplinasForTvwByProfessor(self, professorId,nome=None, semestre=None, ano=None, codigo=None):
         query = f"""SELECT id,nome,ano,semestre FROM disciplinas WHERE 
             `professor` = '{professorId}'
+            {"".join([x for x in f"AND `nome` LIKE '{nome}%'" if nome])}
             {"".join([x for x in f"AND `semestre`= '{semestre}'" if semestre])}
             {"".join([x for x in f"AND `ano`= '{ano}'" if ano])}
             {"".join([x for x in f"AND `codigo`= '{codigo}'" if codigo])}"""
@@ -100,6 +111,16 @@ class Connection:
 
     def getAlunoByNome(self, nome: str = ...):
         query = f"SELECT * FROM aluno WHERE nome = '{nome}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getNotaByAlunoAndIdentificadorAndDisciplina(self,disciplinaID,alunoID,identificador):
+        query = f"SELECT nota FROM notas WHERE disciplina = '{disciplinaID}' AND aluno = '{alunoID}' AND identificador LIKE '{identificador}'"
+        retorno = self.select(query)
+        return retorno
+
+    def getIdOfLastTable(self,table):
+        query = f"SELECT seq FROM sqlite_sequence WHERE name = '{table}'"
         retorno = self.select(query)
         return retorno
 
@@ -116,8 +137,16 @@ class Connection:
         retorno = self.select(query)
         return retorno
 
+    def getAllAlunos(self):
+        retorno = self.select("SELECT * FROM aluno")
+        return retorno
+
     def alterConfigurationsByUser(self, userId, N1Amount, N2Amount):
         query = f"UPDATE configurations SET `atvAmountPartialN1` = '{N1Amount}', `atvAmountPartialN2` = '{N2Amount}' WHERE `usuario` = '{userId}'"
+        self.operation(query)
+    
+    def alterProfessorInUsuariobyId(self, userID, professorID):
+        query = f"UPDATE usuario SET `professor` = '{professorID}' WHERE `id` = '{userID}'"
         self.operation(query)
 
 alunos = """CREATE TABLE IF NOT EXISTS 
@@ -140,7 +169,7 @@ notas = """CREATE TABLE IF NOT EXISTS
     notas(id INTEGER PRIMARY KEY AUTOINCREMENT, 
     disciplina INTEGER NOT NULL,
     aluno INTEGER NOT NULL,
-    nota FLOAT(3,2) NOT NULL,
+    nota VARCHAR(6) NOT NULL,
     identificador VARCHAR(15) NOT NULL,
     FOREIGN KEY(disciplina) REFERENCES disciplinas(id),
     FOREIGN KEY(aluno) REFERENCES alunos(id)
@@ -183,8 +212,8 @@ configurations = """
     configurations(id INTEGER PRIMARY KEY AUTOINCREMENT,
     atvAmountPartialN1 INTEGER,
     atvAmountPartialN2 INTEGER,
-    usuario INTEGER NOT NULL,
-    FOREIGN KEY(usuario) REFERENCES usuario(id))
+    disciplina INTEGER NOT NULL,
+    FOREIGN KEY(disciplina) REFERENCES disciplinas(id))
     """
 
 dd = Connection()
@@ -199,19 +228,19 @@ dd.operation(configurations)
 prof = Professor("Bruno")
 
 if not dd.getUserByUserName('admin'):
-    admin = Usuario('12345','admin','1')
+    admin = Usuario("b'$2b$12$CU0yNKtq/BPlXt1XNtxAWuDKQpFTmUgzXfXiIg0OCvKWlRuQbezsq'",'admin','None')
     dd.inserir(admin)
 
-if not dd.getAlunoByNome('bruno'):
-    for i in range(0,10):
-        matricula = random()
-        aluno = Aluno('bruno',matricula)
-        dd.inserir(aluno)
+# if not dd.getAlunoByNome('bruno'):
+#     for i in range(0,10):
+#         matricula = random()
+#         aluno = Aluno('bruno',matricula)
+#         dd.inserir(aluno)
 
-brunos = dd.getAlunoByNome('bruno')
-for aluno in range(0, 5):
-    if not dd.getAlunoDisciplinas(brunos[aluno][0],1):
-        dd.operation(F"INSERT INTO alunodisciplinas(aluno,disciplina) VALUES('{brunos[aluno][0]}','1')")
+# brunos = dd.getAlunoByNome('bruno')
+# for aluno in range(0, 5):
+#     if not dd.getAlunoDisciplinas(brunos[aluno][0],1):
+#         dd.operation(F"INSERT INTO alunodisciplinas(aluno,disciplina) VALUES('{brunos[aluno][0]}','1')")
 
 # for i in range(0,5):
 #    dd.inserir(prof)

@@ -1,14 +1,14 @@
 class Configurations:
 
-    __slots__ = ['_atvAmountPartialN1','_atvAmountPartialN2', "_usuario"]
-    def __init__(self, parcialN1, parcialN2, user):
+    __slots__ = ['_atvAmountPartialN1','_atvAmountPartialN2', "_disciplina"]
+    def __init__(self, parcialN1, parcialN2, disciplinaID):
         self._atvAmountPartialN1 = parcialN1
         self._atvAmountPartialN2 = parcialN2
-        self._usuario = user
+        self._disciplina = disciplinaID
 
     @property
     def usuario(self):
-        return self._usuario
+        return self._disciplina
 
     @property
     def atvAmountPartialN1(self):

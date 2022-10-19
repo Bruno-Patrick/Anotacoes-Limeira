@@ -57,4 +57,5 @@ class Login:
         if not hash:
             raise Exception("hash cannot be empty!")
         bytes = key.encode('utf-8')
+        hash = hash.encode('utf-8')
         return bcrypt.checkpw(bytes, hash)

@@ -11,12 +11,12 @@ class Notas:
             situacao = Situação final do aluno
 
     """
-    __slots__ = ['_id','_disciplina','_nota','_aluno','_identificador']
+    __slots__ = ['_id','_disciplina','_aluno','_nota','_identificador']
     def __init__(self, disciplina, nota, aluno, identificador):
         self._id = None
         self._disciplina = disciplina
-        self._nota = nota
         self._aluno = aluno
+        self._nota = nota
         self._identificador = identificador
 
     @property
